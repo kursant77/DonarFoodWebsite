@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link, useLocation } from "wouter";
 import { useState } from "react";
+import ThemeToggle from "./ThemeToggle";
 
 interface HeaderProps {
   cartItemCount: number;
@@ -45,8 +46,10 @@ export default function Header({ cartItemCount, onCartClick }: HeaderProps) {
           ))}
         </nav>
 
-        {/* Cart Button */}
+        {/* Cart Button & Theme Toggle */}
         <div className="flex items-center gap-2">
+          <ThemeToggle />
+          
           <Button
             size="icon"
             variant="ghost"
