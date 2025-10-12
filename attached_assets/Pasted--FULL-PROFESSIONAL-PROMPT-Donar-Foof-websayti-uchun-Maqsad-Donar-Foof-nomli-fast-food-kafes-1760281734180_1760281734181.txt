@@ -1,0 +1,160 @@
+🧠 FULL PROFESSIONAL PROMPT (Donar Foof websayti uchun)
+
+🔹 Maqsad: Donar Foof nomli fast food kafesi uchun to‘liq, zamonaviy, responsive va animatsiyali websayt yaratish.
+🔹 Texnologiyalar: HTML, CSS (yoki Tailwind CSS), JavaScript (frontend uchun) va Flask (backend uchun).
+🔹 Qo‘shimcha: Admin panel orqali menyuni to‘liq boshqarish (qo‘shish, o‘chirish, tahrirlash, narxini o‘zgartirish).
+
+🏠 Sayt tuzilmasi (bo‘limlar):
+
+Bosh sahifa (Home)
+
+Donar Foof logosi va sarlavhasi
+
+“Fast food – tez, mazali, issiq” shiori
+
+“Online zakaz qiling” tugmasi
+
+Orqa fon: burger, lavash, shaverma va doner rasmlari bilan yumshoq animatsiya
+
+Responsive dizayn, mobil ekranlarda moslashadi
+
+Biz haqimizda (About)
+
+Donar Foof tarixi, maqsadi va qadriyatlari
+
+Qisqa matn: “Biz tezkor xizmat, mazali taom va do‘stona muhitni taklif qilamiz.”
+
+Kafening ichki ko‘rinishidan 2–3 ta rasm (gallery-style)
+
+Menyu (Menu)
+
+Har bir mahsulot karta ko‘rinishida chiqadi
+
+Har bir card’da:
+
+Rasm
+
+Nomi
+
+Narxi
+
+“Savatga qo‘shish” tugmasi
+
+Savat (cart) oynasi ochilganda tanlangan taomlar va umumiy summa chiqadi
+
+Savatni tozalash yoki buyurtma berish (faqat demo – to‘lov tizimi shart emas)
+
+🍔 Menyu kategoriyalari va mahsulotlari
+1️⃣ Lavashlar:
+
+Lavash — 35 000 so‘m
+
+Pishloqli Lavash — 37 000 so‘m
+
+Lavash 2X (katta) — 40 000 so‘m
+
+Pishloqli Lavash 2X — 42 000 so‘m
+
+2️⃣ Shaverma:
+
+Shaverma — 25 000 so‘m
+
+Shaverma 2X — 30 000 so‘m
+
+3️⃣ Doner:
+
+Doner — 33 000 so‘m
+
+4️⃣ Burger:
+
+Burger — 33 000 so‘m
+
+Burger 2X — 40 000 so‘m
+
+Motsarella Burger — 38 000 so‘m
+
+5️⃣ Tost:
+
+Tost Говядина — 40 000 so‘m
+
+Tost Chicken — 35 000 so‘m
+
+Tost Салями — 30 000 so‘m
+
+6️⃣ Hot-Dog:
+
+Hot-dog — 13 000 so‘m
+
+(✅ Agar qo‘shimcha mahsulot rasmlari bo‘lsa — AI har birini avtomatik aniqlab menyuga joylashtirsin.)
+
+🧾 Online zakaz tizimi (to‘lovsiz)
+
+Foydalanuvchi taomlarni “Savatga qo‘shish” orqali tanlaydi
+
+Savat ichida:
+
+Mahsulot nomi
+
+Narxi
+
+Umumiy summa
+
+“Buyurtma berish” tugmasi (faqat ko‘rsatish uchun)
+
+To‘lov tizimi yo‘q, lekin buyurtma formasi (ism, telefon, manzil) bo‘lishi mumkin
+
+⚙️ Admin panel (asosiy talablar)
+
+Login ma’lumotlari (default):
+
+Username: admin
+
+Parol: donarfoof123
+
+Funktsiyalar:
+
+🔸 Mahsulot qo‘shish (nom, rasm, narx, kategoriya)
+
+🔸 Mahsulotni o‘chirish
+
+🔸 Mahsulotni tahrirlash (nom, narx, rasm)
+
+🔸 Mahsulotlarni jadvalda ko‘rish
+
+🔸 JSON yoki local storage orqali ma’lumotlar saqlanishi
+
+🔸 Responsive boshqaruv panel (mobil + desktop uchun)
+
+Admin panel dizayni:
+
+Zamonaviy, minimal, qora-oq yoki qizil-soya rang palitrasi
+
+Sahifalar: Login | Dashboard | Menyu boshqaruvi | Logout
+
+📱 Qo‘shimcha talablar:
+
+Sayt to‘liq responsive bo‘lsin
+
+Animatsiyalar yumshoq, professional va chiroyli bo‘lsin
+
+Tailwind CSS yoki Bootstrap ishlatish mumkin
+
+“Contact” bo‘limida lokatsiya (Google Map) va telefon raqami bo‘lsin
+
+Favicon va logoda “🍔 Donar Foof” yozuvi
+
+🧑‍💻 Yakuniy natija:
+
+index.html – Bosh sahifa
+
+menu.html – Menyu sahifasi
+
+about.html – Biz haqimizda
+
+contact.html – Bog‘lanish
+
+admin/ papkasida: login.html, dashboard.html, script.js, data.json
+
+assets/images/ – mahsulot rasmlari
+
+README.md – o‘rnatish bo‘yicha ko‘rsatma
