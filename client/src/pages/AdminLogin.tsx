@@ -4,18 +4,42 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Lock, User } from "lucide-react";
 import { useState } from "react";
+import { useLocation } from "wouter";
 
-interface AdminLoginProps {
-  onLogin: (username: string, password: string) => void;
-}
-
-export default function AdminLogin({ onLogin }: AdminLoginProps) {
+export default function AdminLogin() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [, setLocation] = useLocation();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onLogin(username, password);
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch("http://localhost:5000/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        // Saqlab qo‘yamiz (token yoki sessiya)
+        localStorage.setItem("isAdmin", "true");
+        setLocation("/admin-dashboard");
+      } else {
+        setError("❌ Noto‘g‘ri foydalanuvchi nomi yoki parol!");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("⚠️ Serverga ulanib bo‘lmadi.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -24,7 +48,9 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
         <div className="text-center mb-8">
           <div className="text-4xl mb-2">🍔</div>
           <h1 className="text-3xl font-bold mb-2">Donar Foof Admin</h1>
-          <p className="text-muted-foreground">Kirish uchun ma'lumotlarni kiriting</p>
+          <p className="text-muted-foreground">
+            Kirish uchun ma'lumotlarni kiriting
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -39,7 +65,6 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
               onChange={(e) => setUsername(e.target.value)}
               placeholder="admin"
               required
-              data-testid="input-username"
             />
           </div>
 
@@ -55,16 +80,17 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               required
-              data-testid="input-password"
             />
           </div>
 
-          <Button
-            type="submit"
-            className="w-full"
-            data-testid="button-login"
-          >
-            Kirish
+          {error && (
+            <p className="text-red-500 text-sm font-medium text-center">
+              {error}
+            </p>
+          )}
+
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? "Kirilmoqda..." : "Kirish"}
           </Button>
         </form>
 
