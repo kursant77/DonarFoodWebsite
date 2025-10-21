@@ -5,6 +5,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 
+// ✅ Backend URL .env dan olinadi
+const API_URL = import.meta.env.VITE_API_URL;
+
 interface OrderFormProps {
   total: number;
   onSubmit: () => void;
@@ -27,8 +30,8 @@ export default function OrderForm({ total, onSubmit, onCancel }: OrderFormProps)
       // 🛒 Savatdagi mahsulotlar
       const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
 
-      // 🚀 Serverga yuborish
-      const res = await fetch("/api/orders", {
+      // 🚀 Backendga so‘rov yuboramiz
+      const res = await fetch(`${API_URL}/api/orders`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -45,7 +48,7 @@ export default function OrderForm({ total, onSubmit, onCancel }: OrderFormProps)
       if (res.ok && data.success) {
         alert("✅ Buyurtma muvaffaqiyatli yuborildi!");
         localStorage.removeItem("cart");
-        onSubmit(); // Formani yopish va holatni yangilash
+        onSubmit();
       } else {
         alert("❌ Xato: " + (data.message || "Buyurtma yuborishda xato"));
       }
@@ -108,19 +111,10 @@ export default function OrderForm({ total, onSubmit, onCancel }: OrderFormProps)
           </div>
 
           <div className="flex gap-3">
-            <Button
-              type="button"
-              variant="outline"
-              className="flex-1"
-              onClick={onCancel}
-            >
+            <Button type="button" variant="outline" className="flex-1" onClick={onCancel}>
               Bekor qilish
             </Button>
-            <Button
-              type="submit"
-              className="flex-1"
-              disabled={loading}
-            >
+            <Button type="submit" className="flex-1" disabled={loading}>
               {loading ? "Yuborilmoqda..." : "Tasdiqlash"}
             </Button>
           </div>

@@ -3,30 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  Plus,
-  Edit2,
-  Trash2,
-  LogOut,
-  ShoppingBag,
-  Package,
-} from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Plus, Edit2, Trash2, LogOut, ShoppingBag, Package } from "lucide-react";
 
-// ✅ ID endi string
+const API_URL = import.meta.env.VITE_API_URL; // ✅ Backend URL .env'dan olinadi
+
 interface Product {
   id: string;
   name: string;
@@ -45,11 +27,7 @@ interface Order {
   date: string;
 }
 
-export default function AdminDashboard({
-  onLogout,
-}: {
-  onLogout: () => void;
-}) {
+export default function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
@@ -68,7 +46,7 @@ export default function AdminDashboard({
   // ✅ Mahsulotlarni olish
   const loadProducts = async () => {
     try {
-      const res = await fetch("/api/products");
+      const res = await fetch(`${API_URL}/api/products`);
       const data = await res.json();
       setProducts(data);
     } catch (err) {
@@ -79,7 +57,7 @@ export default function AdminDashboard({
   // ✅ Buyurtmalarni olish
   const loadOrders = async () => {
     try {
-      const res = await fetch("/api/orders");
+      const res = await fetch(`${API_URL}/api/orders`);
       const data = await res.json();
       setOrders(data);
     } catch (err) {
@@ -103,14 +81,11 @@ export default function AdminDashboard({
     formData.append("category", form.category);
     if (form.image) formData.append("image", form.image);
 
-    const url = editing ? `/api/products/${editing.id}` : "/api/products";
+    const url = editing ? `${API_URL}/api/products/${editing.id}` : `${API_URL}/api/products`;
     const method = editing ? "PUT" : "POST";
 
     try {
-      const res = await fetch(url, {
-        method,
-        body: formData,
-      });
+      const res = await fetch(url, { method, body: formData });
       const data = await res.json();
 
       if (res.ok && data.success) {
@@ -130,11 +105,11 @@ export default function AdminDashboard({
     setLoading(false);
   };
 
-  // ✅ O‘chirish (string id bilan!)
+  // ✅ O‘chirish
   const handleDelete = async (id: string) => {
     if (!confirm("Mahsulotni o‘chirmoqchimisiz?")) return;
     try {
-      const res = await fetch(`/api/products/${id}`, { method: "DELETE" });
+      const res = await fetch(`${API_URL}/api/products/${id}`, { method: "DELETE" });
       const data = await res.json();
 
       if (res.ok && data.success) {
@@ -159,28 +134,16 @@ export default function AdminDashboard({
         </div>
 
         <nav className="flex-1 p-4 space-y-2">
-          <Button
-            variant={activeTab === "products" ? "default" : "ghost"}
-            className="w-full justify-start"
-            onClick={() => setActiveTab("products")}
-          >
+          <Button variant={activeTab === "products" ? "default" : "ghost"} className="w-full justify-start" onClick={() => setActiveTab("products")}>
             <Package className="h-4 w-4 mr-2" /> Mahsulotlar
           </Button>
-          <Button
-            variant={activeTab === "orders" ? "default" : "ghost"}
-            className="w-full justify-start"
-            onClick={() => setActiveTab("orders")}
-          >
+          <Button variant={activeTab === "orders" ? "default" : "ghost"} className="w-full justify-start" onClick={() => setActiveTab("orders")}>
             <ShoppingBag className="h-4 w-4 mr-2" /> Buyurtmalar
           </Button>
         </nav>
 
         <div className="p-4 border-t">
-          <Button
-            variant="outline"
-            className="w-full justify-start"
-            onClick={onLogout}
-          >
+          <Button variant="outline" className="w-full justify-start" onClick={onLogout}>
             <LogOut className="h-4 w-4 mr-2" /> Chiqish
           </Button>
         </div>
@@ -217,41 +180,24 @@ export default function AdminDashboard({
                 <TableBody>
                   {products.map((p) => (
                     <TableRow key={p.id}>
-                      <TableCell>
-                        {p.image ? (
-                          <img
-                            src={p.image}
-                            className="w-16 h-16 rounded object-cover"
-                          />
-                        ) : (
-                          "—"
-                        )}
-                      </TableCell>
+                      <TableCell>{p.image ? <img src={p.image} className="w-16 h-16 rounded object-cover" /> : "—"}</TableCell>
                       <TableCell>{p.name}</TableCell>
                       <TableCell>{p.category}</TableCell>
                       <TableCell>{p.price} so‘m</TableCell>
                       <TableCell className="text-right space-x-2">
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          onClick={() => {
-                            setEditing(p);
-                            setForm({
-                              name: p.name,
-                              price: String(p.price),
-                              category: p.category,
-                              image: null,
-                            });
-                            setIsModalOpen(true);
-                          }}
-                        >
+                        <Button size="icon" variant="ghost" onClick={() => {
+                          setEditing(p);
+                          setForm({
+                            name: p.name,
+                            price: String(p.price),
+                            category: p.category,
+                            image: null,
+                          });
+                          setIsModalOpen(true);
+                        }}>
                           <Edit2 className="h-4 w-4" />
                         </Button>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          onClick={() => handleDelete(p.id)}
-                        >
+                        <Button size="icon" variant="ghost" onClick={() => handleDelete(p.id)}>
                           <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
                       </TableCell>
@@ -273,17 +219,11 @@ export default function AdminDashboard({
                   <div className="flex justify-between mb-2">
                     <div>
                       <p className="font-bold">{order.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {order.phone} — {order.address}
-                      </p>
+                      <p className="text-sm text-muted-foreground">{order.phone} — {order.address}</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-mono font-bold text-primary">
-                        {order.total.toLocaleString()} so‘m
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {new Date(order.date).toLocaleString()}
-                      </p>
+                      <p className="font-mono font-bold text-primary">{order.total.toLocaleString()} so‘m</p>
+                      <p className="text-sm text-muted-foreground">{new Date(order.date).toLocaleString()}</p>
                     </div>
                   </div>
                 </Card>
@@ -297,55 +237,29 @@ export default function AdminDashboard({
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>
-              {editing ? "Mahsulotni tahrirlash" : "Yangi mahsulot"}
-            </DialogTitle>
+            <DialogTitle>{editing ? "Mahsulotni tahrirlash" : "Yangi mahsulot"}</DialogTitle>
           </DialogHeader>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Label>Nomi</Label>
-              <Input
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                required
-              />
+              <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
             </div>
             <div>
               <Label>Kategoriya</Label>
-              <Input
-                value={form.category}
-                onChange={(e) => setForm({ ...form, category: e.target.value })}
-                required
-              />
+              <Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} required />
             </div>
             <div>
               <Label>Narx</Label>
-              <Input
-                type="number"
-                value={form.price}
-                onChange={(e) => setForm({ ...form, price: e.target.value })}
-                required
-              />
+              <Input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} required />
             </div>
             <div>
               <Label>Rasm</Label>
-              <Input
-                type="file"
-                accept="image/*"
-                onChange={(e) =>
-                  setForm({ ...form, image: e.target.files?.[0] || null })
-                }
-              />
+              <Input type="file" accept="image/*" onChange={(e) => setForm({ ...form, image: e.target.files?.[0] || null })} />
             </div>
 
             <div className="flex gap-2 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                className="flex-1"
-                onClick={() => setIsModalOpen(false)}
-              >
+              <Button type="button" variant="outline" className="flex-1" onClick={() => setIsModalOpen(false)}>
                 Bekor qilish
               </Button>
               <Button type="submit" className="flex-1" disabled={loading}>

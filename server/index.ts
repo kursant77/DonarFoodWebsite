@@ -1,8 +1,17 @@
 import express, { type Request, Response, NextFunction } from "express";
+import cors from "cors"; // ✅ CORS qo‘shildi
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
+
+// ✅ CORS sozlamasi (frontend bilan aloqa uchun)
+app.use(cors({
+  origin: "*", // ⚠️ Agar xavfsizlik kerak bo‘lsa, bu yerga: "https://donarfood.vercel.app"
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type"],
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
