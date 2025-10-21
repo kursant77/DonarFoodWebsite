@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Switch, Route, useLocation } from "wouter";
-import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/components/ui/toaster";
+import { queryClient } from "./lib/queryClient";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
 
 import Header from "@/components/Header";
@@ -24,16 +24,16 @@ import type { Product } from "@shared/schema";
 function AppContent() {
   const [location, setLocation] = useLocation();
   const { toast } = useToast();
-  
-  // Cart state
+
+  // 🛒 Cart holati
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [showOrderForm, setShowOrderForm] = useState(false);
 
-  // Admin state
+  // 👑 Admin holati
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
 
-  // Cart functions
+  // 🛍️ Savat funksiyalari
   const addToCart = (product: Product) => {
     setCartItems((prev) => {
       const existing = prev.find((item) => item.id === product.id);
@@ -72,9 +72,8 @@ function AppContent() {
   };
 
   const handleOrderSubmit = (data: { name: string; phone: string; address: string }) => {
-    console.log('Order submitted:', { ...data, items: cartItems });
-    
-    //todo: remove mock functionality - submit to backend API
+    console.log("Order submitted:", { ...data, items: cartItems });
+
     toast({
       title: "Buyurtma qabul qilindi!",
       description: "Tez orada siz bilan bog'lanamiz.",
@@ -84,12 +83,11 @@ function AppContent() {
     setShowOrderForm(false);
   };
 
-  // Admin functions
+  // 👑 Admin funksiyalari
   const handleAdminLogin = (username: string, password: string) => {
-    //todo: remove mock functionality - verify with backend
     if (username === "admin" && password === "donarfoof123") {
       setIsAdminLoggedIn(true);
-      setLocation("/admin/dashboard");
+      setLocation("/admin/dashboard"); // ✅ to‘g‘ri yo‘l
       toast({
         title: "Xush kelibsiz!",
         description: "Admin panelga kirildi",
@@ -112,6 +110,7 @@ function AppContent() {
     });
   };
 
+  // 🧮 Savat ma’lumotlari
   const cartItemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
@@ -119,6 +118,7 @@ function AppContent() {
 
   return (
     <>
+      {/* Header faqat admin bo‘lmaganda */}
       {!isAdminRoute && (
         <Header
           cartItemCount={cartItemCount}
@@ -128,13 +128,15 @@ function AppContent() {
 
       <main className={isAdminRoute ? "" : "min-h-screen"}>
         <Switch>
+          {/* 🔹 Asosiy sahifalar */}
           <Route path="/" component={Home} />
           <Route path="/menu">
             <Menu onAddToCart={addToCart} />
           </Route>
           <Route path="/about" component={About} />
           <Route path="/contact" component={Contact} />
-          
+
+          {/* 🔹 Admin login */}
           <Route path="/admin">
             {isAdminLoggedIn ? (
               <AdminDashboard onLogout={handleAdminLogout} />
@@ -142,7 +144,8 @@ function AppContent() {
               <AdminLogin onLogin={handleAdminLogin} />
             )}
           </Route>
-          
+
+          {/* 🔹 Admin dashboard */}
           <Route path="/admin/dashboard">
             {isAdminLoggedIn ? (
               <AdminDashboard onLogout={handleAdminLogout} />
@@ -151,12 +154,15 @@ function AppContent() {
             )}
           </Route>
 
+          {/* 🔹 404 */}
           <Route component={NotFound} />
         </Switch>
       </main>
 
+      {/* Footer faqat admin bo‘lmaganda */}
       {!isAdminRoute && <Footer />}
 
+      {/* 🛒 Savat */}
       <ShoppingCart
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
@@ -166,6 +172,7 @@ function AppContent() {
         onCheckout={handleCheckout}
       />
 
+      {/* 🧾 Buyurtma formasi */}
       {showOrderForm && (
         <OrderForm
           total={total}

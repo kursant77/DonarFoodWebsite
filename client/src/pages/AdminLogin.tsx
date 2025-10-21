@@ -4,14 +4,16 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Lock, User } from "lucide-react";
 import { useState } from "react";
-import { useLocation } from "wouter";
 
-export default function AdminLogin() {
+interface AdminLoginProps {
+  onLogin: (username: string, password: string) => void;
+}
+
+export default function AdminLogin({ onLogin }: AdminLoginProps) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [, setLocation] = useLocation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,7 +21,7 @@ export default function AdminLogin() {
     setError("");
 
     try {
-      const res = await fetch("http://localhost:5000/api/login", {
+      const res = await fetch("/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
@@ -27,15 +29,15 @@ export default function AdminLogin() {
 
       const data = await res.json();
 
-      if (data.success) {
-        // Saqlab qo‘yamiz (token yoki sessiya)
+      if (res.ok && data.success) {
+        // 🔐 Backend success
         localStorage.setItem("isAdmin", "true");
-        setLocation("/admin-dashboard");
+        onLogin(username, password); // ✅ App.tsx dagi login funksiyasini chaqir
       } else {
         setError("❌ Noto‘g‘ri foydalanuvchi nomi yoki parol!");
       }
     } catch (err) {
-      console.error(err);
+      console.error("Serverga ulanib bo‘lmadi:", err);
       setError("⚠️ Serverga ulanib bo‘lmadi.");
     } finally {
       setLoading(false);
@@ -47,7 +49,7 @@ export default function AdminLogin() {
       <Card className="w-full max-w-md p-8">
         <div className="text-center mb-8">
           <div className="text-4xl mb-2">🍔</div>
-          <h1 className="text-3xl font-bold mb-2">Donar Foof Admin</h1>
+          <h1 className="text-3xl font-bold mb-2">Donar Food Admin</h1>
           <p className="text-muted-foreground">
             Kirish uchun ma'lumotlarni kiriting
           </p>

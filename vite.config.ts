@@ -11,10 +11,10 @@ export default defineConfig({
     process.env.REPL_ID !== undefined
       ? [
           await import("@replit/vite-plugin-cartographer").then((m) =>
-            m.cartographer(),
+            m.cartographer()
           ),
           await import("@replit/vite-plugin-dev-banner").then((m) =>
-            m.devBanner(),
+            m.devBanner()
           ),
         ]
       : []),
@@ -35,6 +35,13 @@ export default defineConfig({
     fs: {
       strict: true,
       deny: ["**/.*"],
+    },
+    proxy: {
+      // 🔁 Barcha API so‘rovlarini 5000-portdagi backend’ga yo‘naltirish
+      "/api": {
+        target: "http://localhost:5000",
+        changeOrigin: true,
+      },
     },
   },
 });
