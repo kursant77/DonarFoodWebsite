@@ -13,11 +13,14 @@ export default function Menu({ onAddToCart }: MenuProps) {
   const [selectedCategory, setSelectedCategory] = useState("Hammasi");
   const [error, setError] = useState("");
 
+  // 🌐 Backend URL .env fayldan olinadi
+  const API_URL = import.meta.env.VITE_API_URL;
+
   // 🧩 Backenddan mahsulotlarni olish
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const res = await fetch("/api/products");
+        const res = await fetch(`${API_URL}/api/products`);
         if (!res.ok) throw new Error("Mahsulotlarni olishda xato yuz berdi.");
         const data = await res.json();
         setProducts(data);
@@ -29,15 +32,13 @@ export default function Menu({ onAddToCart }: MenuProps) {
       }
     }
     fetchProducts();
-  }, []);
+  }, [API_URL]);
 
   // 🔍 Kategoriyalarni aniqlash (dublikatlarni olib tashlaymiz)
   const categories = useMemo(() => {
     const allCats = Array.from(
       new Set(products.map((p) => p.category).filter(Boolean))
     );
-
-    // “Hammasi” ni faqat 1 marta qo‘shamiz
     return allCats.includes("Hammasi") ? allCats : ["Hammasi", ...allCats];
   }, [products]);
 
@@ -48,16 +49,10 @@ export default function Menu({ onAddToCart }: MenuProps) {
   }, [selectedCategory, products]);
 
   if (loading)
-    return (
-      <p className="text-center mt-10 text-lg">
-        ⏳ Mahsulotlar yuklanmoqda...
-      </p>
-    );
+    return <p className="text-center mt-10 text-lg">⏳ Mahsulotlar yuklanmoqda...</p>;
 
   if (error)
-    return (
-      <p className="text-center mt-10 text-red-500 font-medium">{error}</p>
-    );
+    return <p className="text-center mt-10 text-red-500 font-medium">{error}</p>;
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
@@ -88,9 +83,9 @@ export default function Menu({ onAddToCart }: MenuProps) {
               key={product.id}
               product={{
                 ...product,
-                image: product.image?.startsWith("/uploads")
+                image: product.image?.startsWith("http")
                   ? product.image
-                  : `/uploads/${product.image}`,
+                  : `${API_URL}${product.image}`,
               }}
               onAddToCart={onAddToCart}
             />
