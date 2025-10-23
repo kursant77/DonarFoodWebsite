@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Plus, Edit2, Trash2, LogOut, ShoppingBag, Package } from "lucide-react";
 
-const API_URL = import.meta.env.VITE_API_URL; // ✅ Backend URL .env'dan olinadi
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 interface Product {
   id: string;
@@ -32,36 +32,29 @@ export default function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<"products" | "orders">("products");
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
+  const [form, setForm] = useState({ name: "", price: "", category: "", image: null as File | null });
 
-  const [form, setForm] = useState({
-    name: "",
-    price: "",
-    category: "",
-    image: null as File | null,
-  });
-
-  // ✅ Mahsulotlarni olish
+  // --- Mahsulotlarni olish ---
   const loadProducts = async () => {
     try {
       const res = await fetch(`${API_URL}/api/products`);
       const data = await res.json();
       setProducts(data);
-    } catch (err) {
-      console.error("Mahsulotlarni olishda xato:", err);
+    } catch {
+      alert("⚠️ Server bilan aloqa yo‘q (products)");
     }
   };
 
-  // ✅ Buyurtmalarni olish
+  // --- Buyurtmalarni olish ---
   const loadOrders = async () => {
     try {
       const res = await fetch(`${API_URL}/api/orders`);
       const data = await res.json();
       setOrders(data);
-    } catch (err) {
-      console.error("Buyurtmalarni olishda xato:", err);
+    } catch {
+      alert("⚠️ Server bilan aloqa yo‘q (orders)");
     }
   };
 
@@ -70,7 +63,7 @@ export default function AdminDashboard({ onLogout }: { onLogout: () => void }) {
     loadOrders();
   }, []);
 
-  // ✅ Qo‘shish yoki tahrirlash
+  // --- Yangi yoki tahrirlangan mahsulotni saqlash ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -97,29 +90,24 @@ export default function AdminDashboard({ onLogout }: { onLogout: () => void }) {
       } else {
         alert("❌ Xato: " + data.message);
       }
-    } catch (err) {
-      console.error("Saqlashda xato:", err);
+    } catch {
       alert("⚠️ Server bilan aloqa yo‘q");
     }
 
     setLoading(false);
   };
 
-  // ✅ O‘chirish
+  // --- Mahsulotni o‘chirish ---
   const handleDelete = async (id: string) => {
     if (!confirm("Mahsulotni o‘chirmoqchimisiz?")) return;
     try {
       const res = await fetch(`${API_URL}/api/products/${id}`, { method: "DELETE" });
       const data = await res.json();
-
       if (res.ok && data.success) {
         alert("🗑️ Mahsulot o‘chirildi!");
         await loadProducts();
-      } else {
-        alert("❌ Xato: " + data.message);
       }
-    } catch (err) {
-      console.error("O‘chirishda xato:", err);
+    } catch {
       alert("⚠️ Server bilan aloqa yo‘q");
     }
   };
@@ -155,13 +143,7 @@ export default function AdminDashboard({ onLogout }: { onLogout: () => void }) {
           <>
             <div className="flex items-center justify-between mb-6">
               <h1 className="text-2xl font-bold">Mahsulotlar boshqaruvi</h1>
-              <Button
-                onClick={() => {
-                  setEditing(null);
-                  setForm({ name: "", price: "", category: "", image: null });
-                  setIsModalOpen(true);
-                }}
-              >
+              <Button onClick={() => { setEditing(null); setForm({ name: "", price: "", category: "", image: null }); setIsModalOpen(true); }}>
                 <Plus className="h-4 w-4 mr-2" /> Qo‘shish
               </Button>
             </div>
@@ -180,19 +162,18 @@ export default function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                 <TableBody>
                   {products.map((p) => (
                     <TableRow key={p.id}>
-                      <TableCell>{p.image ? <img src={p.image} className="w-16 h-16 rounded object-cover" /> : "—"}</TableCell>
+                      <TableCell>
+                        {p.image ? (
+                          <img src={`${API_URL}${p.image}`} className="w-16 h-16 rounded object-cover" />
+                        ) : "—"}
+                      </TableCell>
                       <TableCell>{p.name}</TableCell>
                       <TableCell>{p.category}</TableCell>
                       <TableCell>{p.price} so‘m</TableCell>
                       <TableCell className="text-right space-x-2">
                         <Button size="icon" variant="ghost" onClick={() => {
                           setEditing(p);
-                          setForm({
-                            name: p.name,
-                            price: String(p.price),
-                            category: p.category,
-                            image: null,
-                          });
+                          setForm({ name: p.name, price: String(p.price), category: p.category, image: null });
                           setIsModalOpen(true);
                         }}>
                           <Edit2 className="h-4 w-4" />

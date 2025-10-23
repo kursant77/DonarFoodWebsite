@@ -6,13 +6,13 @@ import path from "path";
 import fs from "fs";
 import { storage } from "./storage";
 
-// --- Prepare uploads directory ---
+// --- Uploads papkasini tayyorlash ---
 const uploadDir = path.join(process.cwd(), "uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// --- Multer configuration ---
+// --- Multer sozlamasi ---
 const diskStorage = multer.diskStorage({
   destination(_req, _file, cb) {
     cb(null, uploadDir);
@@ -26,24 +26,32 @@ const diskStorage = multer.diskStorage({
 const upload = multer({ storage: diskStorage });
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // --- Admin login ---
+  // --- 🧠 Admin login ---
   app.post("/api/admin/login", async (req: Request, res: Response) => {
+    console.log("🧠 /api/admin/login request:", req.body); // 🔍 log kiritildi
+
     const { username, password } = req.body ?? {};
-    if (username === "admin" && password === "donarfoof123") {
+
+    console.log("🧩 username:", username, "password:", password); // 🔍 log
+
+    if (username === "admin" && password === "donarfood123") {
+      console.log("✅ Login successful!");
       return res.json({ success: true, message: "Login successful" });
     }
+
+    console.log("❌ Login failed!");
     return res
       .status(401)
       .json({ success: false, message: "Invalid credentials" });
   });
 
-  // --- Get all products ---
+  // --- 📦 Get all products ---
   app.get("/api/products", async (_req: Request, res: Response) => {
     const products = await storage.getAllProducts();
     return res.json(products);
   });
 
-  // --- Add new product ---
+  // --- ➕ Add new product ---
   app.post(
     "/api/products",
     upload.single("image"),
@@ -75,13 +83,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   );
 
-  // --- Update product ---
+  // --- ✏️ Update product ---
   app.put(
     "/api/products/:id",
     upload.single("image"),
     async (req: Request, res: Response) => {
       try {
-        const id = String(req.params.id); // <-- 🔥 string sifatida ishlatamiz
+        const id = String(req.params.id);
         const { name, price, category } = req.body ?? {};
         const file = req.file as Express.Multer.File | undefined;
         const image = file ? `/uploads/${file.filename}` : req.body.image ?? "";
@@ -99,7 +107,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
             .json({ success: false, message: "Product not found" });
         }
 
-        return res.json({ success: true, message: "Product updated successfully" });
+        return res.json({
+          success: true,
+          message: "Product updated successfully",
+        });
       } catch (err: any) {
         return res
           .status(500)
@@ -108,10 +119,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   );
 
-  // --- Delete product ---
+  // --- 🗑️ Delete product ---
   app.delete("/api/products/:id", async (req: Request, res: Response) => {
     try {
-      const id = String(req.params.id); // <-- 🔥 string qilib o‘tamiz
+      const id = String(req.params.id);
       const deleted = await storage.deleteProduct(id);
 
       if (!deleted) {
@@ -120,7 +131,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           .json({ success: false, message: "Product not found" });
       }
 
-      return res.json({ success: true, message: "Product deleted successfully" });
+      return res.json({
+        success: true,
+        message: "Product deleted successfully",
+      });
     } catch (err: any) {
       return res
         .status(500)
@@ -128,7 +142,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // --- Create new order ---
+  // --- 🧾 Create new order ---
   app.post("/api/orders", async (req: Request, res: Response) => {
     try {
       const { name, phone, address, items, total } = req.body ?? {};
@@ -159,13 +173,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // --- Get all orders ---
+  // --- 📜 Get all orders ---
   app.get("/api/orders", async (_req: Request, res: Response) => {
     const orders = await storage.getAllOrders();
     return res.json(orders);
   });
 
-  // --- Serve uploaded images ---
+  // --- 🖼️ Serve uploaded images ---
   app.use("/uploads", express.static(uploadDir));
 
   const httpServer = createServer(app);

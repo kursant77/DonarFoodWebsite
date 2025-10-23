@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Switch, Route, useLocation } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
@@ -25,15 +25,47 @@ function AppContent() {
   const [location, setLocation] = useLocation();
   const { toast } = useToast();
 
-  // 🛒 Cart holati
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [showOrderForm, setShowOrderForm] = useState(false);
-
-  // 👑 Admin holati
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
 
-  // 🛍️ Savat funksiyalari
+  // ✅ LocalStorage orqali admin holatini tiklash
+  useEffect(() => {
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
+    setIsAdminLoggedIn(isAdmin);
+  }, []);
+
+  // 👑 Admin login funksiyasi
+  const handleAdminLogin = (username: string, password: string) => {
+    if (username === "admin" && password === "donarfood123") {
+      setIsAdminLoggedIn(true);
+      localStorage.setItem("isAdmin", "true");
+      setLocation("/admin/dashboard");
+      toast({
+        title: "Xush kelibsiz!",
+        description: "Admin panelga kirildi",
+      });
+    } else {
+      toast({
+        title: "Xato!",
+        description: "Login yoki parol noto'g'ri",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleAdminLogout = () => {
+    setIsAdminLoggedIn(false);
+    localStorage.removeItem("isAdmin");
+    setLocation("/admin");
+    toast({
+      title: "Chiqildi",
+      description: "Admin paneldan chiqdingiz",
+    });
+  };
+
+  // 🛒 Savat logikasi
   const addToCart = (product: Product) => {
     setCartItems((prev) => {
       const existing = prev.find((item) => item.id === product.id);
@@ -83,34 +115,6 @@ function AppContent() {
     setShowOrderForm(false);
   };
 
-  // 👑 Admin funksiyalari
-  const handleAdminLogin = (username: string, password: string) => {
-    if (username === "admin" && password === "donarfoof123") {
-      setIsAdminLoggedIn(true);
-      setLocation("/admin/dashboard"); // ✅ to‘g‘ri yo‘l
-      toast({
-        title: "Xush kelibsiz!",
-        description: "Admin panelga kirildi",
-      });
-    } else {
-      toast({
-        title: "Xato!",
-        description: "Login yoki parol noto'g'ri",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleAdminLogout = () => {
-    setIsAdminLoggedIn(false);
-    setLocation("/admin");
-    toast({
-      title: "Chiqildi",
-      description: "Admin paneldan chiqdingiz",
-    });
-  };
-
-  // 🧮 Savat ma’lumotlari
   const cartItemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
@@ -118,7 +122,6 @@ function AppContent() {
 
   return (
     <>
-      {/* Header faqat admin bo‘lmaganda */}
       {!isAdminRoute && (
         <Header
           cartItemCount={cartItemCount}
@@ -128,7 +131,7 @@ function AppContent() {
 
       <main className={isAdminRoute ? "" : "min-h-screen"}>
         <Switch>
-          {/* 🔹 Asosiy sahifalar */}
+          {/* 🏠 Oddiy sayt sahifalari */}
           <Route path="/" component={Home} />
           <Route path="/menu">
             <Menu onAddToCart={addToCart} />
@@ -136,16 +139,7 @@ function AppContent() {
           <Route path="/about" component={About} />
           <Route path="/contact" component={Contact} />
 
-          {/* 🔹 Admin login */}
-          <Route path="/admin">
-            {isAdminLoggedIn ? (
-              <AdminDashboard onLogout={handleAdminLogout} />
-            ) : (
-              <AdminLogin onLogin={handleAdminLogin} />
-            )}
-          </Route>
-
-          {/* 🔹 Admin dashboard */}
+          {/* 👑 Admin sahifalar */}
           <Route path="/admin/dashboard">
             {isAdminLoggedIn ? (
               <AdminDashboard onLogout={handleAdminLogout} />
@@ -154,15 +148,16 @@ function AppContent() {
             )}
           </Route>
 
-          {/* 🔹 404 */}
+          <Route path="/admin">
+            <AdminLogin onLogin={handleAdminLogin} />
+          </Route>
+
           <Route component={NotFound} />
         </Switch>
       </main>
 
-      {/* Footer faqat admin bo‘lmaganda */}
       {!isAdminRoute && <Footer />}
 
-      {/* 🛒 Savat */}
       <ShoppingCart
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
@@ -172,7 +167,6 @@ function AppContent() {
         onCheckout={handleCheckout}
       />
 
-      {/* 🧾 Buyurtma formasi */}
       {showOrderForm && (
         <OrderForm
           total={total}

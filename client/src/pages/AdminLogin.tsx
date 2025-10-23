@@ -28,11 +28,12 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
       });
 
       const data = await res.json();
+      console.log("🧠 Login response:", data); // 🧩 Debug maqsadida
 
-      if (res.ok && data.success) {
-        // 🔐 Backend success
+      // ✅ Faqat backendning success javobiga qaraymiz
+      if (data.success === true) {
         localStorage.setItem("isAdmin", "true");
-        onLogin(username, password); // ✅ App.tsx dagi login funksiyasini chaqir
+        onLogin(username, password);
       } else {
         setError("❌ Noto‘g‘ri foydalanuvchi nomi yoki parol!");
       }
@@ -96,11 +97,11 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
           </Button>
         </form>
 
-        <div className="mt-6 p-4 bg-muted/50 rounded-lg text-sm text-muted-foreground">
+        {/* <div className="mt-6 p-4 bg-muted/50 rounded-lg text-sm text-muted-foreground">
           <p className="font-medium mb-1">Demo kirish ma'lumotlari:</p>
           <p>Username: admin</p>
-          <p>Parol: donarfoof123</p>
-        </div>
+          <p>Parol: donarfood123</p>
+        </div> */}
       </Card>
     </div>
   );

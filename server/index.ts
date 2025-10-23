@@ -1,20 +1,23 @@
 import express, { type Request, Response, NextFunction } from "express";
-import cors from "cors"; // ✅ CORS qo‘shildi
+import cors from "cors";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
 
-// ✅ CORS sozlamasi (frontend bilan aloqa uchun)
-app.use(cors({
-  origin: "*", // ⚠️ Agar xavfsizlik kerak bo‘lsa, bu yerga: "https://donarfood.vercel.app"
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type"],
-}));
+// ✅ CORS — frontend bilan aloqa uchun
+app.use(
+  cors({
+    origin: "*", // xavfsizlik uchun kerak bo‘lsa: "https://donarfood.vercel.app"
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type"],
+  })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// ✅ Log yozish (API so‘rovlari uchun)
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
@@ -64,6 +67,6 @@ app.use((req, res, next) => {
 
   const port = parseInt(process.env.PORT || "5000", 10);
   server.listen(port, "0.0.0.0", () => {
-    log(`serving on port ${port}`);
+    log(`✅ Server ishlayapti: http://localhost:${port}`);
   });
 })();
