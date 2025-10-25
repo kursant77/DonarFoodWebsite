@@ -36,7 +36,7 @@ export default function Home() {
       {/* Features Section */}
       <section className="max-w-7xl mx-auto px-4 py-16">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-          Nega <span className="text-primary">Donar Foof</span>?
+          Nega <span className="text-primary">Donar Food</span>?
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

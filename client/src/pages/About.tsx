@@ -31,7 +31,7 @@ export default function About() {
           Biz haqimizda
         </h1>
         <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-          Donar Foof - bu tezkor xizmat, mazali taom va do'stona muhit uchun 
+          Donar FooD - bu tezkor xizmat, mazali taom va do'stona muhit uchun 
           eng yaxshi tanlov
         </p>
       </div>
@@ -42,7 +42,7 @@ export default function About() {
           <h2 className="text-3xl font-bold mb-6">Bizning tarix</h2>
           <div className="space-y-4 text-lg leading-relaxed text-muted-foreground">
             <p>
-              Donar Foof 2014 yilda tashkil etilgan va bugungi kunda Toshkentning 
+              Donar Foof 2025 yilda tashkil etilgan va bugungi kunda xorazimning 
               eng mashhur fast food kafeleridan biriga aylangan. Bizning maqsadimiz 
               oddiy - har bir mijozga mazali, sifatli va tez tayyorlangan taomlarni 
               taqdim etish.

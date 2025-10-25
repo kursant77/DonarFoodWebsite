@@ -5,14 +5,15 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { storage } from "./storage";
+import fetch from "node-fetch";
 
-// --- Uploads papkasini tayyorlash ---
+// --- 📸 Uploads papkasini tayyorlash ---
 const uploadDir = path.join(process.cwd(), "uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// --- Multer sozlamasi ---
+// --- ⚙️ Multer sozlamasi ---
 const diskStorage = multer.diskStorage({
   destination(_req, _file, cb) {
     cb(null, uploadDir);
@@ -22,135 +23,133 @@ const diskStorage = multer.diskStorage({
     cb(null, uniqueSuffix + path.extname(file.originalname));
   },
 });
-
 const upload = multer({ storage: diskStorage });
 
+// --- 🤖 Telegram sozlamalari ---
+const TELEGRAM_BOT_TOKEN = "8217777940:AAEtHgcJq95sXehj2vsyH9CFf5PfpL2pI84";
+const CHAT_ID = "5865994146";
+
+// --- 🔔 Telegram xabar yuborish ---
+async function sendOrderToTelegram(order: any) {
+  const message = `
+🧾 *Yangi zakaz!*
+👤 Ism: ${order.name}
+📞 Telefon: ${order.phone}
+📍 Manzil: ${order.address}
+
+🍔 Buyurtmalar:
+${order.items
+  .map((item: any) => `- ${item.name} (${item.quantity} dona) — ${item.price} so'm`)
+  .join("\n")}
+
+💰 Umumiy summa: ${order.total} so'm
+  `;
+
+  const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+
+  await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      chat_id: CHAT_ID,
+      text: message,
+      parse_mode: "Markdown",
+    }),
+  });
+}
+
+// --- 🚀 Asosiy route’lar ---
 export async function registerRoutes(app: Express): Promise<Server> {
-  // --- 🧠 Admin login ---
+  // 🧠 Admin login
   app.post("/api/admin/login", async (req: Request, res: Response) => {
-    console.log("🧠 /api/admin/login request:", req.body); // 🔍 log kiritildi
-
     const { username, password } = req.body ?? {};
-
-    console.log("🧩 username:", username, "password:", password); // 🔍 log
-
     if (username === "admin" && password === "donarfood123") {
-      console.log("✅ Login successful!");
       return res.json({ success: true, message: "Login successful" });
     }
-
-    console.log("❌ Login failed!");
-    return res
-      .status(401)
-      .json({ success: false, message: "Invalid credentials" });
+    return res.status(401).json({ success: false, message: "Invalid credentials" });
   });
 
-  // --- 📦 Get all products ---
+  // 📦 Barcha mahsulotlar
   app.get("/api/products", async (_req: Request, res: Response) => {
     const products = await storage.getAllProducts();
     return res.json(products);
   });
 
-  // --- ➕ Add new product ---
-  app.post(
-    "/api/products",
-    upload.single("image"),
-    async (req: Request, res: Response) => {
-      try {
-        const { name, price, category } = req.body ?? {};
-        const file = req.file as Express.Multer.File | undefined;
-        const image = file ? `/uploads/${file.filename}` : "";
-
-        if (!name || !price || !category) {
-          return res
-            .status(400)
-            .json({ success: false, message: "All fields are required" });
-        }
-
-        const newProduct = await storage.addProduct({
-          name,
-          price: Number(price),
-          category,
-          image,
-        });
-
-        return res.json({ success: true, product: newProduct });
-      } catch (err: any) {
-        return res
-          .status(500)
-          .json({ success: false, message: err?.message ?? "Server error" });
-      }
-    }
-  );
-
-  // --- ✏️ Update product ---
-  app.put(
-    "/api/products/:id",
-    upload.single("image"),
-    async (req: Request, res: Response) => {
-      try {
-        const id = String(req.params.id);
-        const { name, price, category } = req.body ?? {};
-        const file = req.file as Express.Multer.File | undefined;
-        const image = file ? `/uploads/${file.filename}` : req.body.image ?? "";
-
-        const updated = await storage.updateProduct(id, {
-          name,
-          price: Number(price),
-          category,
-          image,
-        });
-
-        if (!updated) {
-          return res
-            .status(404)
-            .json({ success: false, message: "Product not found" });
-        }
-
-        return res.json({
-          success: true,
-          message: "Product updated successfully",
-        });
-      } catch (err: any) {
-        return res
-          .status(500)
-          .json({ success: false, message: err?.message ?? "Server error" });
-      }
-    }
-  );
-
-  // --- 🗑️ Delete product ---
-  app.delete("/api/products/:id", async (req: Request, res: Response) => {
+  // ➕ Mahsulot qo‘shish
+  app.post("/api/products", upload.single("image"), async (req: Request, res: Response) => {
     try {
-      const id = String(req.params.id);
-      const deleted = await storage.deleteProduct(id);
+      const { name, price, category } = req.body ?? {};
+      const file = req.file as Express.Multer.File | undefined;
+      const image = file ? `/uploads/${file.filename}` : "";
 
-      if (!deleted) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Product not found" });
+      if (!name || !price || !category) {
+        return res.status(400).json({ success: false, message: "Barcha maydonlarni to‘ldiring" });
+      }
+
+      const newProduct = await storage.addProduct({
+        name,
+        price: Number(price),
+        category,
+        image,
+      });
+
+      return res.json({ success: true, product: newProduct });
+    } catch (err: any) {
+      return res.status(500).json({ success: false, message: err?.message ?? "Server xatosi" });
+    }
+  });
+
+  // ✏️ Mahsulotni yangilash
+  app.put("/api/products/:id", upload.single("image"), async (req: Request, res: Response) => {
+    try {
+      const id = String(req.params.id).trim();
+      const { name, price, category } = req.body ?? {};
+      const file = req.file as Express.Multer.File | undefined;
+      const image = file ? `/uploads/${file.filename}` : req.body.image ?? "";
+
+      const updated = await storage.updateProduct(id, {
+        name,
+        price: Number(price),
+        category,
+        image,
+      });
+
+      if (!updated) {
+        return res.status(404).json({ success: false, message: "Mahsulot topilmadi" });
       }
 
       return res.json({
         success: true,
-        message: "Product deleted successfully",
+        message: "Mahsulot muvaffaqiyatli yangilandi",
+        product: updated,
       });
     } catch (err: any) {
-      return res
-        .status(500)
-        .json({ success: false, message: err?.message ?? "Server error" });
+      return res.status(500).json({ success: false, message: err?.message ?? "Server xatosi" });
     }
   });
 
-  // --- 🧾 Create new order ---
+  // 🗑️ Mahsulotni o‘chirish
+  app.delete("/api/products/:id", async (req: Request, res: Response) => {
+    try {
+      const id = String(req.params.id).trim();
+      const deleted = await storage.deleteProduct(id);
+
+      if (!deleted) {
+        return res.status(404).json({ success: false, message: "Mahsulot topilmadi" });
+      }
+
+      return res.json({ success: true, message: "Mahsulot o‘chirildi" });
+    } catch (err: any) {
+      return res.status(500).json({ success: false, message: err?.message ?? "Server xatosi" });
+    }
+  });
+
+  // 🧾 Buyurtma yaratish
   app.post("/api/orders", async (req: Request, res: Response) => {
     try {
       const { name, phone, address, items, total } = req.body ?? {};
-
       if (!name || !phone || !address || !items || !total) {
-        return res
-          .status(400)
-          .json({ success: false, message: "All fields are required" });
+        return res.status(400).json({ success: false, message: "Barcha maydonlarni to‘ldiring" });
       }
 
       const newOrder = await storage.addOrder({
@@ -161,25 +160,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         total: Number(total),
       });
 
+      await sendOrderToTelegram(newOrder);
+
       return res.json({
         success: true,
-        message: "Order submitted successfully",
+        message: "Buyurtma muvaffaqiyatli yuborildi",
         order: newOrder,
       });
     } catch (err: any) {
-      return res
-        .status(500)
-        .json({ success: false, message: err?.message ?? "Server error" });
+      return res.status(500).json({ success: false, message: err?.message ?? "Server xatosi" });
     }
   });
 
-  // --- 📜 Get all orders ---
+  // 📜 Barcha buyurtmalar
   app.get("/api/orders", async (_req: Request, res: Response) => {
     const orders = await storage.getAllOrders();
     return res.json(orders);
   });
 
-  // --- 🖼️ Serve uploaded images ---
+  // 🖼️ Yuklangan rasmni ko‘rsatish
   app.use("/uploads", express.static(uploadDir));
 
   const httpServer = createServer(app);

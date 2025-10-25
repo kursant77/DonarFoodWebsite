@@ -30,7 +30,7 @@ export default function HeroSection({ onOrderClick }: HeroSectionProps) {
         <div className="max-w-3xl">
           <div className="inline-block mb-4">
             <Badge className="text-lg px-4 py-1 bg-primary/10 text-primary border-primary/20">
-              🍔 Donar Foof
+              🍔 Donar Food
             </Badge>
           </div>
           
@@ -55,6 +55,7 @@ export default function HeroSection({ onOrderClick }: HeroSectionProps) {
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             <Button
+              onClick={onOrderClick}
               size="lg"
               variant="outline"
               className="text-lg px-8 py-6 rounded-full"

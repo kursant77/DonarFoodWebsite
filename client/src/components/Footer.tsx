@@ -20,11 +20,11 @@ export default function Footer() {
             <div className="space-y-3 text-muted-foreground">
               <div className="flex items-start gap-2">
                 <MapPin className="h-5 w-5 mt-0.5 flex-shrink-0" />
-                <span>Toshkent shahar, Chilonzor tumani</span>
+                <span>Xorazm viloyati, shovot tumani</span>
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="h-5 w-5 flex-shrink-0" />
-                <span>+998 90 123 45 67</span>
+                <span>+998 91 985 95 95</span>
               </div>
               <div className="flex items-start gap-2">
                 <Clock className="h-5 w-5 mt-0.5 flex-shrink-0" />
