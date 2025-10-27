@@ -1,16 +1,17 @@
 import { useState, useEffect } from "react";
 import { Switch, Route, useLocation } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { queryClient } from "./lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
 
+// 🧩 Components
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ShoppingCart, { CartItem } from "@/components/ShoppingCart";
-import OrderForm from "@/components/OrderForm";
 
+// 🧭 Pages
 import Home from "@/pages/Home";
 import Menu from "@/pages/Menu";
 import About from "@/pages/About";
@@ -21,51 +22,56 @@ import NotFound from "@/pages/not-found";
 
 import type { Product } from "@shared/schema";
 
+// ✅ Backend URL
+const API_URL = import.meta.env.VITE_API_URL;
+
 function AppContent() {
   const [location, setLocation] = useLocation();
   const { toast } = useToast();
 
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [showOrderForm, setShowOrderForm] = useState(false);
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
 
-  // ✅ LocalStorage orqali admin holatini tiklash
+  // 🧠 LocalStorage orqali admin holatini tiklash
   useEffect(() => {
     const isAdmin = localStorage.getItem("isAdmin") === "true";
     setIsAdminLoggedIn(isAdmin);
   }, []);
 
-  // 👑 Admin login funksiyasi
+  // 👑 Admin login
   const handleAdminLogin = (username: string, password: string) => {
     if (username === "admin" && password === "donarfood123") {
       setIsAdminLoggedIn(true);
       localStorage.setItem("isAdmin", "true");
       setLocation("/admin/dashboard");
+
       toast({
         title: "Xush kelibsiz!",
-        description: "Admin panelga kirildi",
+        description: "Admin panelga kirildi.",
       });
     } else {
       toast({
         title: "Xato!",
-        description: "Login yoki parol noto'g'ri",
+        description: "Login yoki parol noto‘g‘ri.",
         variant: "destructive",
       });
     }
   };
 
+  // 🚪 Admin chiqish
   const handleAdminLogout = () => {
     setIsAdminLoggedIn(false);
     localStorage.removeItem("isAdmin");
     setLocation("/admin");
+
     toast({
       title: "Chiqildi",
-      description: "Admin paneldan chiqdingiz",
+      description: "Admin paneldan chiqdingiz.",
     });
   };
 
-  // 🛒 Savat logikasi
+  // 🛒 Savatga qo‘shish
   const addToCart = (product: Product) => {
     setCartItems((prev) => {
       const existing = prev.find((item) => item.id === product.id);
@@ -80,11 +86,12 @@ function AppContent() {
     });
 
     toast({
-      title: "Savatga qo'shildi!",
-      description: `${product.name} savatga qo'shildi`,
+      title: "Savatga qo‘shildi!",
+      description: `${product.name} savatga qo‘shildi.`,
     });
   };
 
+  // 🔄 Miqdorni o‘zgartirish
   const updateQuantity = (productId: string, quantity: number) => {
     if (quantity < 1) return;
     setCartItems((prev) =>
@@ -94,34 +101,22 @@ function AppContent() {
     );
   };
 
+  // ❌ Mahsulotni o‘chirish
   const removeItem = (productId: string) => {
     setCartItems((prev) => prev.filter((item) => item.id !== productId));
   };
 
-  const handleCheckout = () => {
-    setIsCartOpen(false);
-    setShowOrderForm(true);
-  };
-
-  const handleOrderSubmit = (data: { name: string; phone: string; address: string }) => {
-    console.log("Order submitted:", { ...data, items: cartItems });
-
-    toast({
-      title: "Buyurtma qabul qilindi!",
-      description: "Tez orada siz bilan bog'lanamiz.",
-    });
-
-    setCartItems([]);
-    setShowOrderForm(false);
-  };
-
-  const cartItemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-  const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  // 🔢 Umumiy qiymat
+  const cartItemCount = cartItems.reduce(
+    (sum, item) => sum + item.quantity,
+    0
+  );
 
   const isAdminRoute = location.startsWith("/admin");
 
   return (
     <>
+      {/* 🔝 Header (Admin sahifalarda yashirin) */}
       {!isAdminRoute && (
         <Header
           cartItemCount={cartItemCount}
@@ -131,7 +126,7 @@ function AppContent() {
 
       <main className={isAdminRoute ? "" : "min-h-screen"}>
         <Switch>
-          {/* 🏠 Oddiy sayt sahifalari */}
+          {/* 🌐 Foydalanuvchi sahifalari */}
           <Route path="/" component={Home} />
           <Route path="/menu">
             <Menu onAddToCart={addToCart} />
@@ -139,7 +134,7 @@ function AppContent() {
           <Route path="/about" component={About} />
           <Route path="/contact" component={Contact} />
 
-          {/* 👑 Admin sahifalar */}
+          {/* 👑 Admin sahifalari */}
           <Route path="/admin/dashboard">
             {isAdminLoggedIn ? (
               <AdminDashboard onLogout={handleAdminLogout} />
@@ -152,32 +147,27 @@ function AppContent() {
             <AdminLogin onLogin={handleAdminLogin} />
           </Route>
 
+          {/* ❌ 404 sahifasi */}
           <Route component={NotFound} />
         </Switch>
       </main>
 
+      {/* 🔚 Footer */}
       {!isAdminRoute && <Footer />}
 
+      {/* 🛒 Savat oynasi */}
       <ShoppingCart
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
         items={cartItems}
         onUpdateQuantity={updateQuantity}
         onRemoveItem={removeItem}
-        onCheckout={handleCheckout}
       />
-
-      {showOrderForm && (
-        <OrderForm
-          total={total}
-          onSubmit={handleOrderSubmit}
-          onCancel={() => setShowOrderForm(false)}
-        />
-      )}
     </>
   );
 }
 
+// 🌍 Root Provider
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>

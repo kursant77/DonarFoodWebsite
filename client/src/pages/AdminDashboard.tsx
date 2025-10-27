@@ -28,7 +28,7 @@ import {
   X,
 } from "lucide-react";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const API_URL = import.meta.env.VITE_API_URL || "https://donarfoodwebsite-1.onrender.com";
 
 interface Product {
   id: string;
@@ -66,10 +66,11 @@ export default function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   // --- Mahsulotlarni olish ---
   const loadProducts = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/products`);
+      const res = await fetch(`https://donarfoodwebsite-1.onrender.com/api/products`);
       const data = await res.json();
       setProducts(data);
-    } catch {
+    } catch (err) {
+      console.error("❌ Xato (products):", err);
       alert("⚠️ Server bilan aloqa yo‘q (products)");
     }
   };
@@ -77,10 +78,11 @@ export default function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   // --- Buyurtmalarni olish ---
   const loadOrders = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/orders`);
+      const res = await fetch(`https://donarfoodwebsite-1.onrender.com/api/orders`);
       const data = await res.json();
       setOrders(data);
-    } catch {
+    } catch (err) {
+      console.error("❌ Xato (orders):", err);
       alert("⚠️ Server bilan aloqa yo‘q (orders)");
     }
   };
@@ -110,20 +112,21 @@ export default function AdminDashboard({ onLogout }: { onLogout: () => void }) {
       const res = await fetch(url, { method, body: formData });
       const data = await res.json();
 
-      if (res.ok && data.success) {
+      if (res.ok) {
         await loadProducts();
         alert(editing ? "✅ Mahsulot yangilandi!" : "✅ Yangi mahsulot qo‘shildi!");
         setIsModalOpen(false);
         setEditing(null);
         setForm({ name: "", price: "", category: "", image: null });
       } else {
-        alert("❌ Xato: " + data.message);
+        alert("❌ Xato: " + (data.message || "Server xatosi"));
       }
-    } catch {
+    } catch (err) {
+      console.error("❌ Xato (submit):", err);
       alert("⚠️ Server bilan aloqa yo‘q");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   // --- Mahsulotni o‘chirish ---
@@ -134,11 +137,14 @@ export default function AdminDashboard({ onLogout }: { onLogout: () => void }) {
         method: "DELETE",
       });
       const data = await res.json();
-      if (res.ok && data.success) {
+      if (res.ok) {
         alert("🗑️ Mahsulot o‘chirildi!");
         await loadProducts();
+      } else {
+        alert("❌ Xato: " + (data.message || "O‘chirib bo‘lmadi"));
       }
-    } catch {
+    } catch (err) {
+      console.error("❌ Xato (delete):", err);
       alert("⚠️ Server bilan aloqa yo‘q");
     }
   };
@@ -332,9 +338,7 @@ export default function AdminDashboard({ onLogout }: { onLogout: () => void }) {
               <Label>Kategoriya</Label>
               <Input
                 value={form.category}
-                onChange={(e) =>
-                  setForm({ ...form, category: e.target.value })
-                }
+                onChange={(e) => setForm({ ...form, category: e.target.value })}
                 required
               />
             </div>
@@ -343,9 +347,7 @@ export default function AdminDashboard({ onLogout }: { onLogout: () => void }) {
               <Input
                 type="number"
                 value={form.price}
-                onChange={(e) =>
-                  setForm({ ...form, price: e.target.value })
-                }
+                onChange={(e) => setForm({ ...form, price: e.target.value })}
                 required
               />
             </div>
@@ -355,10 +357,7 @@ export default function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                 type="file"
                 accept="image/*"
                 onChange={(e) =>
-                  setForm({
-                    ...form,
-                    image: e.target.files?.[0] || null,
-                  })
+                  setForm({ ...form, image: e.target.files?.[0] || null })
                 }
               />
             </div>
