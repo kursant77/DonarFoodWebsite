@@ -3,8 +3,8 @@ import { Request, Response } from "express";
 import { storage } from "../storage";
 import axios from "axios";
 
-const TELEGRAM_TOKEN = "TOKENNI_BU_YERGA_QO'YING";
-const CHAT_ID = "CHAT_ID_BU_YERGA_QO'YING";
+const TELEGRAM_TOKEN = "8217777940:AAEtHgcJq95sXehj2vsyH9CFf5PfpL2pI84";
+const CHAT_ID = "5865994146";
 
 export const orderController = {
   async getAll(req: Request, res: Response) {

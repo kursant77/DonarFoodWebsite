@@ -2,6 +2,8 @@ import { Button } from "@/components/ui/button";
 import { X, Minus, Plus, ShoppingBag } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import type { Product } from "@shared/schema";
+import { useState } from "react";
+import OrderForm from "@/components/OrderForm";
 
 export interface CartItem extends Product {
   quantity: number;
@@ -13,7 +15,6 @@ interface ShoppingCartProps {
   items: CartItem[];
   onUpdateQuantity: (productId: string, quantity: number) => void;
   onRemoveItem: (productId: string) => void;
-  onCheckout: () => void;
 }
 
 export default function ShoppingCart({
@@ -22,9 +23,21 @@ export default function ShoppingCart({
   items,
   onUpdateQuantity,
   onRemoveItem,
-  onCheckout,
 }: ShoppingCartProps) {
+  const [isOrderFormOpen, setIsOrderFormOpen] = useState(false);
+
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  const handleCheckout = () => {
+    if (items.length === 0) return alert("Savat bo‘sh!");
+    localStorage.setItem("cart", JSON.stringify(items));
+    setIsOrderFormOpen(true);
+  };
+
+  const handleOrderSubmit = () => {
+    setIsOrderFormOpen(false);
+    onClose();
+  };
 
   if (!isOpen) return null;
 
@@ -32,9 +45,8 @@ export default function ShoppingCart({
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50"
+        className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40"
         onClick={onClose}
-        data-testid="cart-backdrop"
       />
 
       {/* Cart Panel */}
@@ -45,7 +57,7 @@ export default function ShoppingCart({
             <ShoppingBag className="h-6 w-6 text-primary" />
             Savat
           </h2>
-          <Button size="icon" variant="ghost" onClick={onClose} data-testid="button-close-cart">
+          <Button size="icon" variant="ghost" onClick={onClose}>
             <X className="h-5 w-5" />
           </Button>
         </div>
@@ -66,50 +78,55 @@ export default function ShoppingCart({
                 <Card key={item.id} className="p-4">
                   <div className="flex gap-4">
                     <img
-                      src={item.image}
+                      src={
+                        item.image?.startsWith("http")
+                          ? item.image
+                          : import.meta.env.VITE_API_URL + item.image
+                      }
                       alt={item.name}
                       className="w-20 h-20 object-cover rounded-md"
                     />
                     <div className="flex-1">
                       <div className="flex items-start justify-between mb-2">
                         <div>
-                          <h3 className="font-semibold" data-testid={`cart-item-${item.id}`}>
-                            {item.name}
-                          </h3>
-                          <p className="text-sm text-muted-foreground">{item.category}</p>
+                          <h3 className="font-semibold">{item.name}</h3>
+                          <p className="text-sm text-muted-foreground">
+                            {item.category}
+                          </p>
                         </div>
                         <Button
                           size="icon"
                           variant="ghost"
                           className="h-6 w-6 -mt-1"
                           onClick={() => onRemoveItem(item.id)}
-                          data-testid={`button-remove-${item.id}`}
                         >
                           <X className="h-4 w-4" />
                         </Button>
                       </div>
-                      
+
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2 border rounded-md">
                           <Button
                             size="icon"
                             variant="ghost"
                             className="h-8 w-8"
-                            onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
+                            onClick={() =>
+                              onUpdateQuantity(item.id, item.quantity - 1)
+                            }
                             disabled={item.quantity <= 1}
-                            data-testid={`button-decrease-${item.id}`}
                           >
                             <Minus className="h-3 w-3" />
                           </Button>
-                          <span className="w-8 text-center font-medium" data-testid={`quantity-${item.id}`}>
+                          <span className="w-8 text-center font-medium">
                             {item.quantity}
                           </span>
                           <Button
                             size="icon"
                             variant="ghost"
                             className="h-8 w-8"
-                            onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
-                            data-testid={`button-increase-${item.id}`}
+                            onClick={() =>
+                              onUpdateQuantity(item.id, item.quantity + 1)
+                            }
                           >
                             <Plus className="h-3 w-3" />
                           </Button>
@@ -131,20 +148,28 @@ export default function ShoppingCart({
           <div className="border-t p-4 space-y-4">
             <div className="flex items-center justify-between text-lg font-bold">
               <span>Jami:</span>
-              <span className="font-mono text-primary text-2xl" data-testid="text-total">
+              <span className="font-mono text-primary text-2xl">
                 {total.toLocaleString()} so'm
               </span>
             </div>
             <Button
               className="w-full py-6 text-lg rounded-full"
-              onClick={onCheckout}
-              data-testid="button-checkout"
+              onClick={handleCheckout}
             >
               Buyurtma berish
             </Button>
           </div>
         )}
       </div>
+
+      {/* ✅ Order Form Modal */}
+      {isOrderFormOpen && (
+        <OrderForm
+          total={total}
+          onSubmit={handleOrderSubmit}
+          onCancel={() => setIsOrderFormOpen(false)}
+        />
+      )}
     </>
   );
 }

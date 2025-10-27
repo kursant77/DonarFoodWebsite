@@ -50,7 +50,7 @@ export default function Contact() {
                 <div>
                   <h3 className="font-semibold mb-1">Manzil</h3>
                   <p className="text-sm text-muted-foreground">
-                    Toshkent shahar, Chilonzor tumani
+                    Xorazm, Shovot
                   </p>
                 </div>
               </div>
@@ -64,7 +64,7 @@ export default function Contact() {
                 <div>
                   <h3 className="font-semibold mb-1">Telefon</h3>
                   <p className="text-sm text-muted-foreground">
-                    +998 90 123 45 67
+                    +998 91 985 95 95
                   </p>
                 </div>
               </div>
@@ -78,7 +78,7 @@ export default function Contact() {
                 <div>
                   <h3 className="font-semibold mb-1">Ish vaqti</h3>
                   <p className="text-sm text-muted-foreground">
-                    Har kuni: 09:00 - 23:00
+                    Har kuni: 08:00 - 23:00
                   </p>
                 </div>
               </div>
@@ -92,7 +92,7 @@ export default function Contact() {
                 <div>
                   <h3 className="font-semibold mb-1">Email</h3>
                   <p className="text-sm text-muted-foreground">
-                    info@donarfoof.uz
+                    info@donarfood.uz
                   </p>
                 </div>
               </div>

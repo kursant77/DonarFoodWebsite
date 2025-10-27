@@ -13,8 +13,8 @@ export default function Menu({ onAddToCart }: MenuProps) {
   const [selectedCategory, setSelectedCategory] = useState("Hammasi");
   const [error, setError] = useState("");
 
-  // 🌐 Backend URL .env fayldan olinadi
-  const API_URL = import.meta.env.VITE_API_URL;
+  // ✅ Backend URL .env fayldan olinadi
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   // 🧩 Backenddan mahsulotlarni olish
   useEffect(() => {

@@ -5,8 +5,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 
-// ✅ Backend URL .env dan olinadi
-const API_URL = import.meta.env.VITE_API_URL;
+// ✅ Backend URL (Render yoki local)
+const API_URL =
+  import.meta.env.VITE_API_URL || "https://donarfood-backend.onrender.com";
 
 interface OrderFormProps {
   total: number;
@@ -22,15 +23,16 @@ export default function OrderForm({ total, onSubmit, onCancel }: OrderFormProps)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !phone || !address) return alert("Barcha maydonlarni to‘ldiring!");
+    if (!name || !phone || !address)
+      return alert("Barcha maydonlarni to‘ldiring!");
 
     setLoading(true);
 
     try {
-      // 🛒 Savatdagi mahsulotlar
+      // 🛒 LocalStorage'dan savatni olish
       const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
 
-      // 🚀 Backendga so‘rov yuboramiz
+      // 🚀 Backendga POST so‘rov
       const res = await fetch(`${API_URL}/api/orders`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -45,7 +47,7 @@ export default function OrderForm({ total, onSubmit, onCancel }: OrderFormProps)
 
       const data = await res.json();
 
-      if (res.ok && data.success) {
+      if (res.ok && (data.success || data.id)) {
         alert("✅ Buyurtma muvaffaqiyatli yuborildi!");
         localStorage.removeItem("cart");
         onSubmit();
@@ -53,7 +55,7 @@ export default function OrderForm({ total, onSubmit, onCancel }: OrderFormProps)
         alert("❌ Xato: " + (data.message || "Buyurtma yuborishda xato"));
       }
     } catch (err) {
-      console.error("Order xato:", err);
+      console.error("❌ Xato (order):", err);
       alert("⚠️ Server bilan aloqa o‘rnatilmadi.");
     } finally {
       setLoading(false);
@@ -111,7 +113,12 @@ export default function OrderForm({ total, onSubmit, onCancel }: OrderFormProps)
           </div>
 
           <div className="flex gap-3">
-            <Button type="button" variant="outline" className="flex-1" onClick={onCancel}>
+            <Button
+              type="button"
+              variant="outline"
+              className="flex-1"
+              onClick={onCancel}
+            >
               Bekor qilish
             </Button>
             <Button type="submit" className="flex-1" disabled={loading}>

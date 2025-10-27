@@ -5,6 +5,9 @@ import { Card } from "@/components/ui/card";
 import { Lock, User } from "lucide-react";
 import { useState } from "react";
 
+// ✅ Backend URL .env fayldan olinadi
+const API_URL = import.meta.env.VITE_API_URL || "https://donarfoodwebsite-1.onrender.com";
+
 interface AdminLoginProps {
   onLogin: (username: string, password: string) => void;
 }
@@ -21,16 +24,16 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
     setError("");
 
     try {
-      const res = await fetch("/api/admin/login", {
+      // ✅ API_URL ni .env'dan o‘qib ishlatamiz
+      const res = await fetch(`${API_URL}/api/admin/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });
 
       const data = await res.json();
-      console.log("🧠 Login response:", data); // 🧩 Debug maqsadida
+      console.log("🧠 Login response:", data);
 
-      // ✅ Faqat backendning success javobiga qaraymiz
       if (data.success === true) {
         localStorage.setItem("isAdmin", "true");
         onLogin(username, password);
@@ -38,7 +41,7 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
         setError("❌ Noto‘g‘ri foydalanuvchi nomi yoki parol!");
       }
     } catch (err) {
-      console.error("Serverga ulanib bo‘lmadi:", err);
+      console.error("⚠️ Serverga ulanib bo‘lmadi:", err);
       setError("⚠️ Serverga ulanib bo‘lmadi.");
     } finally {
       setLoading(false);
@@ -96,12 +99,6 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
             {loading ? "Kirilmoqda..." : "Kirish"}
           </Button>
         </form>
-
-        {/* <div className="mt-6 p-4 bg-muted/50 rounded-lg text-sm text-muted-foreground">
-          <p className="font-medium mb-1">Demo kirish ma'lumotlari:</p>
-          <p>Username: admin</p>
-          <p>Parol: donarfood123</p>
-        </div> */}
       </Card>
     </div>
   );
