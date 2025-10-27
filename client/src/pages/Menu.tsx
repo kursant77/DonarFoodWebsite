@@ -39,7 +39,7 @@ export default function Menu({ onAddToCart }: MenuProps) {
     const allCats = Array.from(
       new Set(products.map((p) => p.category).filter(Boolean))
     );
-    return allCats.includes("Hammasi") ? allCats : ["Hammasi", ...allCats];
+    return allCats.includes("Hammasi") ? allCats : [...allCats];
   }, [products]);
 
   // 🔎 Tanlangan kategoriya bo‘yicha filterlash

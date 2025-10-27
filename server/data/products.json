@@ -1,19 +1,18 @@
 [
   {
-    "id": "1761373539978",
-    "createdAt": "2025-10-25T06:25:39.978Z",
-    "name": "lavash",
-    "price": 25000,
-    "category": "lavash",
-    "image": "/uploads/1761374615668-224650512.webp",
-    "updatedAt": "2025-10-25T06:43:35.670Z"
+    "id": "1761553929037",
+    "createdAt": "2025-10-27T08:32:09.037Z",
+    "name": "hoddog",
+    "price": 14000,
+    "category": "hoddog",
+    "image": "/uploads/1761553929035-852374530.webp"
   },
   {
-    "id": "1761378744445",
-    "createdAt": "2025-10-25T07:52:24.445Z",
-    "name": "qawefwf",
-    "price": 1351,
-    "category": "afwaw",
-    "image": "/uploads/1761378744443-363475852.webp"
+    "id": "1761555003852",
+    "createdAt": "2025-10-27T08:50:03.852Z",
+    "name": "lavash 2 x",
+    "price": 40000,
+    "category": "shoverma",
+    "image": "/uploads/1761555003846-323582639.webp"
   }
 ]
