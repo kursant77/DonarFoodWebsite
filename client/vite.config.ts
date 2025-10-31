@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 
 export default defineConfig({
-  base: "./", // ✅ Muhim! bu style va asset yo‘llarini to‘g‘rilaydi
+  base: "/", // ✅ Vercel uchun to‘g‘ri
   plugins: [react()],
   resolve: {
     alias: {
