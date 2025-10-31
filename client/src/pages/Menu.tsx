@@ -32,7 +32,7 @@ export default function Menu({ onAddToCart }: MenuProps) {
     fetchProducts();
   }, []);
 
-  // 🔍 Kategoriyalarni aniqlash (agar category maydoni bo‘lmasa — “Hammasi” qoldiramiz)
+  // 🔍 Kategoriyalarni aniqlash
   const categories = useMemo(() => {
     const allCats = Array.from(
       new Set(products.map((p) => p.category || "").filter(Boolean))
@@ -47,17 +47,23 @@ export default function Menu({ onAddToCart }: MenuProps) {
   }, [selectedCategory, products]);
 
   if (loading)
-    return <p className="text-center mt-10 text-lg">⏳ Mahsulotlar yuklanmoqda...</p>;
+    return (
+      <p className="text-center mt-10 text-lg text-gray-700 dark:text-gray-300">
+        ⏳ Mahsulotlar yuklanmoqda...
+      </p>
+    );
 
   if (error)
-    return <p className="text-center mt-10 text-red-500 font-medium">{error}</p>;
+    return (
+      <p className="text-center mt-10 text-red-500 font-medium">{error}</p>
+    );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12">
+    <div className="max-w-7xl mx-auto px-4 py-12 transition-colors duration-300 text-gray-900 dark:bg-transparent dark:text-gray-100">
       {/* Header */}
       <div className="text-center mb-12">
         <h1 className="text-4xl md:text-5xl font-bold mb-4">Bizning menyu</h1>
-        <p className="text-xl text-muted-foreground">
+        <p className="text-xl text-muted-foreground dark:text-gray-400">
           Tanlang va zavqlaning — yangi taomlar sizni kutmoqda 🍔
         </p>
       </div>
@@ -92,7 +98,7 @@ export default function Menu({ onAddToCart }: MenuProps) {
           ))}
         </div>
       ) : (
-        <p className="text-center text-muted-foreground text-lg mt-10">
+        <p className="text-center text-muted-foreground dark:text-gray-400 text-lg mt-10">
           Hozircha bu kategoriya bo‘yicha mahsulotlar mavjud emas.
         </p>
       )}
