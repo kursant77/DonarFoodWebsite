@@ -4,11 +4,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { supabase } from "../supabase"; // ✅ Supabase ulanishi
+import { supabase } from "../supabase";
+import axios from "axios";
 
 interface OrderFormProps {
   total: number;
-  onSubmit: () => void;
+  onSubmit: () => void; // bu ShoppingCart ichida handleOrderSubmit() ni bildiradi
   onCancel: () => void;
 }
 
@@ -18,32 +19,57 @@ export default function OrderForm({ total, onSubmit, onCancel }: OrderFormProps)
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // 🔐 Telegram ma’lumotlari
+  const BOT_TOKEN = "8217777940:AAEtHgcJq95sXehj2vsyH9CFf5PfpL2pI84";
+  const CHAT_ID = "5865994146";
+  const TELEGRAM_URL = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !phone || !address)
       return alert("Barcha maydonlarni to‘ldiring!");
 
     setLoading(true);
-
     try {
       const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
 
-      // 🚀 Supabase’ga buyurtma saqlash
-      const { data, error } = await supabase.from("orders").insert([
-        {
-          name,
-          phone,
-          address,
-          items: cartItems,
-          total,
-        },
+      // 🧾 Supabase’ga yozish
+      const { error } = await supabase.from("orders").insert([
+        { name, phone, address, items: cartItems, total },
       ]);
 
       if (error) throw error;
 
-      alert("✅ Buyurtma muvaffaqiyatli yuborildi!");
+      // 🍔 Telegram xabari
+      const itemsList = cartItems
+        .map(
+          (item: any) =>
+            `- ${item.name} (${item.quantity} dona) — ${item.price} so'm`
+        )
+        .join("\n");
+
+      const message = `
+🧾 Yangi zakaz!
+👤 Ism: ${name}
+📞 Telefon: ${phone}
+📍 Manzil: ${address}
+
+🍔 Buyurtmalar:
+${itemsList}
+
+💰 Umumiy summa: ${total.toLocaleString()} so'm
+      `;
+
+      // 🚀 Telegramga yuborish
+      await axios.post(TELEGRAM_URL, {
+        chat_id: CHAT_ID,
+        text: message,
+      });
+
+      // ✅ Faqat 1 joyda alert va submit
+      alert("✅ Buyurtma yuborildi!");
       localStorage.removeItem("cart");
-      onSubmit();
+      onSubmit(); // faqat ShoppingCart ichidagi handleOrderSubmit ishlaydi
     } catch (err: any) {
       console.error("❌ Xato:", err.message);
       alert("Xatolik: " + err.message);

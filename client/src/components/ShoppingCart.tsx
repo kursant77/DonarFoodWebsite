@@ -17,7 +17,6 @@ interface ShoppingCartProps {
   onRemoveItem: (productId: number) => void;
 }
 
-
 export default function ShoppingCart({
   isOpen,
   onClose,
@@ -35,7 +34,10 @@ export default function ShoppingCart({
     setIsOrderFormOpen(true);
   };
 
+  // faqat UI tozalash
   const handleOrderSubmit = () => {
+    localStorage.removeItem("cart");
+    items.forEach((item) => onRemoveItem(item.id));
     setIsOrderFormOpen(false);
     onClose();
   };
@@ -44,15 +46,12 @@ export default function ShoppingCart({
 
   return (
     <>
-      {/* Backdrop */}
       <div
         className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40"
         onClick={onClose}
       />
 
-      {/* Cart Panel */}
       <div className="fixed right-0 top-0 h-full w-full md:w-[400px] bg-background border-l shadow-2xl z-50 flex flex-col animate-in slide-in-from-right duration-300">
-        {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <h2 className="text-2xl font-bold flex items-center gap-2">
             <ShoppingBag className="h-6 w-6 text-primary" />
@@ -63,14 +62,13 @@ export default function ShoppingCart({
           </Button>
         </div>
 
-        {/* Items */}
         <div className="flex-1 overflow-y-auto p-4">
           {items.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center">
               <ShoppingBag className="h-16 w-16 text-muted-foreground mb-4" />
-              <p className="text-lg text-muted-foreground">Savat bo'sh</p>
+              <p className="text-lg text-muted-foreground">Savat bo‘sh</p>
               <p className="text-sm text-muted-foreground mt-2">
-                Mahsulot qo'shishni boshlang
+                Mahsulot qo‘shishni boshlang
               </p>
             </div>
           ) : (
@@ -133,7 +131,7 @@ export default function ShoppingCart({
                           </Button>
                         </div>
                         <div className="font-mono font-bold text-primary">
-                          {(item.price * item.quantity).toLocaleString()} so'm
+                          {(item.price * item.quantity).toLocaleString()} so‘m
                         </div>
                       </div>
                     </div>
@@ -144,13 +142,12 @@ export default function ShoppingCart({
           )}
         </div>
 
-        {/* Footer */}
         {items.length > 0 && (
           <div className="border-t p-4 space-y-4">
             <div className="flex items-center justify-between text-lg font-bold">
               <span>Jami:</span>
               <span className="font-mono text-primary text-2xl">
-                {total.toLocaleString()} so'm
+                {total.toLocaleString()} so‘m
               </span>
             </div>
             <Button
@@ -163,11 +160,10 @@ export default function ShoppingCart({
         )}
       </div>
 
-      {/* Order Form Modal */}
       {isOrderFormOpen && (
         <OrderForm
           total={total}
-          onSubmit={handleOrderSubmit}
+          onSubmit={handleOrderSubmit} // faqat tozalaydi
           onCancel={() => setIsOrderFormOpen(false)}
         />
       )}

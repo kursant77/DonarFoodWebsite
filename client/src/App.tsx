@@ -1,20 +1,11 @@
-// ------------------------------------------------------------
-// 🧩 Asosiy ilova (App.tsx)
-// Jaloliddin Manguberdi akademiyasi uchun tayyorlangan
-// Frontend: React + TypeScript + Wouter + TanStack Query + Supabase
-// ------------------------------------------------------------
-
-import { useState } from "react";
-import { Switch, Route, useLocation } from "wouter"; // ⚙️ Marshrutlash uchun
-import { QueryClientProvider } from "@tanstack/react-query"; // ⚙️ Ma’lumotlarni keshlash uchun
+import { useEffect, useState } from "react";
+import { Switch, Route, useLocation } from "wouter";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
-import { useToast } from "@/hooks/use-toast"; // ✅ Toast bildirishnomalar uchun
+import { useToast } from "@/hooks/use-toast";
 
-// -----------------------------
-// 🧩 Komponentlar va sahifalar
-// -----------------------------
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ShoppingCart from "@/components/ShoppingCart";
@@ -28,42 +19,38 @@ import AdminDashboard from "@/pages/AdminDashboard";
 import NotFound from "@/pages/not-found";
 
 import type { Product } from "@/types/product";
-import { supabase } from "@/lib/supabaseClient"; // ✅ Supabase ulanishi
+import { supabase } from "@/lib/supabaseClient";
 
-// ------------------------------------------------------------
-// 🧮 Tiplar
-// CartItem — Product asosida yaratilgan, ammo unga quantity qo‘shilgan
-// ------------------------------------------------------------
 export interface CartItem extends Product {
-  id: number; // Har bir mahsulot uchun noyob identifikator
-  quantity: number; // Savatda nechta dona borligini bildiradi
+  id: number;
+  quantity: number;
 }
 
-// ============================================================
-// 🌟 Asosiy ilova komponenti
-// ============================================================
 function AppContent() {
-  const [location, setLocation] = useLocation(); // Wouter orqali marshrutni boshqarish
-  const { toast } = useToast(); // Toast xabarlar uchun
+  const [location, setLocation] = useLocation();
+  const { toast } = useToast();
 
-  // 🛒 Savat holatlari
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  // 🛒 Savat holati + localStorage sinxron
+  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
+    const saved = localStorage.getItem("cart");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cartItems));
+  }, [cartItems]);
+
   const [isCartOpen, setIsCartOpen] = useState(false);
-
-  // 🔐 Admin holati
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState<boolean>(
     localStorage.getItem("isAdmin") === "true"
   );
 
-  // ------------------------------------------------------------
-  // 🔑 ADMIN LOGIN FUNKSIYASI — Supabase jadvalidan foydalanuvchi tekshiradi
-  // ------------------------------------------------------------
+  // 🔐 Admin login
   const handleAdminLogin = async (
     username: string,
     password: string
   ): Promise<boolean> => {
     try {
-      // 🧭 Supabase’dagi “AdminLogin” jadvalidan ma’lumot olish
       const { data, error } = await supabase
         .from("AdminLogin")
         .select("*")
@@ -71,7 +58,6 @@ function AppContent() {
         .eq("password", password)
         .single();
 
-      // ❌ Agar login yoki parol noto‘g‘ri bo‘lsa
       if (error || !data) {
         toast({
           title: "Xato!",
@@ -81,7 +67,6 @@ function AppContent() {
         return false;
       }
 
-      // ✅ Muvaffaqiyatli login
       setIsAdminLoggedIn(true);
       localStorage.setItem("isAdmin", "true");
       setLocation("/admin/dashboard");
@@ -91,7 +76,7 @@ function AppContent() {
         description: "Admin panelga muvaffaqiyatli kirdingiz.",
       });
 
-      return true; // boolean qaytaradi → AdminLogin bilan mos
+      return true;
     } catch (err) {
       console.error("Login error:", err);
       toast({
@@ -103,14 +88,9 @@ function AppContent() {
     }
   };
 
-  // ------------------------------------------------------------
-  // 🚪 ADMIN LOGOUT FUNKSIYASI — hisobdan chiqish
-  // ------------------------------------------------------------
+  // 🚪 Admin logout
   const handleAdminLogout = async (): Promise<void> => {
     try {
-      // Agar Supabase Auth ishlatilsa, bu joyda:
-      // await supabase.auth.signOut();
-
       setIsAdminLoggedIn(false);
       localStorage.removeItem("isAdmin");
       setLocation("/admin");
@@ -129,16 +109,10 @@ function AppContent() {
     }
   };
 
-  // ------------------------------------------------------------
-  // 🛒 SAVAT FUNKSIYALARI — qo‘shish, o‘chirish, miqdorni yangilash
-  // ------------------------------------------------------------
-
-  // ➕ Mahsulotni savatga qo‘shish
+  // 🛒 Savat funksiyalari
   const addToCart = (product: Product): void => {
     setCartItems((prev) => {
       const existing = prev.find((item) => item.id === product.id);
-
-      // Agar mahsulot savatda bo‘lsa — miqdorni oshirish
       if (existing) {
         return prev.map((item) =>
           item.id === product.id
@@ -146,21 +120,17 @@ function AppContent() {
             : item
         );
       }
-
-      // Yangi mahsulotni qo‘shish
-      return [...prev, { ...(product as Product), quantity: 1 } as CartItem];
+      return [...prev, { ...product, quantity: 1 } as CartItem];
     });
 
-    // ✅ Toast xabari
     toast({
       title: "Savatga qo‘shildi!",
       description: `${product.name} savatga qo‘shildi.`,
     });
   };
 
-  // 🔄 Mahsulot miqdorini o‘zgartirish
   const updateQuantity = (productId: number, quantity: number): void => {
-    if (quantity < 1) return; // 0 yoki manfiy bo‘lishiga ruxsat yo‘q
+    if (quantity < 1) return;
     setCartItems((prev) =>
       prev.map((item) =>
         item.id === productId ? { ...item, quantity } : item
@@ -168,26 +138,19 @@ function AppContent() {
     );
   };
 
-  // ❌ Mahsulotni savatdan o‘chirish
   const removeItem = (productId: number): void => {
     setCartItems((prev) => prev.filter((item) => item.id !== productId));
   };
 
-  // 📊 Savatdagi umumiy mahsulotlar soni
   const cartItemCount = cartItems.reduce(
     (sum, item) => sum + item.quantity,
     0
   );
 
-  // 🔒 Admin sahifalarini aniqlash (Header/Footer’ni yashirish uchun)
   const isAdminRoute = location.startsWith("/admin");
 
-  // ------------------------------------------------------------
-  // 🧱 RENDER QISMI — Barcha sahifalar va komponentlar
-  // ------------------------------------------------------------
   return (
     <>
-      {/* 🌐 Header (faqat foydalanuvchi sahifalarida) */}
       {!isAdminRoute && (
         <Header
           cartItemCount={cartItemCount}
@@ -195,22 +158,15 @@ function AppContent() {
         />
       )}
 
-      {/* 📄 Asosiy sahifalar */}
       <main className={isAdminRoute ? "" : "min-h-screen"}>
         <Switch>
-          {/* 🏠 Asosiy sahifa */}
           <Route path="/" component={Home} />
-
-          {/* 🍔 Menu sahifasi (mahsulotlar) */}
           <Route path="/menu">
             <Menu onAddToCart={addToCart} />
           </Route>
-
-          {/* ℹ️ Ma’lumot sahifalari */}
           <Route path="/about" component={About} />
           <Route path="/contact" component={Contact} />
 
-          {/* 🔐 Admin sahifalari */}
           <Route path="/admin/dashboard">
             {isAdminLoggedIn ? (
               <AdminDashboard onLogout={handleAdminLogout} />
@@ -219,20 +175,16 @@ function AppContent() {
             )}
           </Route>
 
-          {/* 🧩 Admin login sahifasi */}
           <Route path="/admin">
             <AdminLogin onLogin={handleAdminLogin} />
           </Route>
 
-          {/* 🚫 404 sahifa */}
           <Route component={NotFound} />
         </Switch>
       </main>
 
-      {/* 🌐 Footer (faqat foydalanuvchi sahifalarida) */}
       {!isAdminRoute && <Footer />}
 
-      {/* 🛒 Savat oynasi */}
       <ShoppingCart
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
@@ -244,15 +196,12 @@ function AppContent() {
   );
 }
 
-// ============================================================
-// 🌍 Root komponent — barcha kontekstlarni bir joyda boshqaradi
-// ============================================================
 export default function App(): JSX.Element {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <AppContent />
-        <Toaster /> {/* 🔔 Toast bildirishnomalari */}
+        <Toaster />
       </TooltipProvider>
     </QueryClientProvider>
   );

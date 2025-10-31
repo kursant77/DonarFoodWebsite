@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../supabase"; // ✅ Supabase ulanishi
+import { supabase } from "../supabase";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 
 interface AdminDashboardProps {
   onLogout: () => Promise<void>;
@@ -12,7 +11,6 @@ interface AdminDashboardProps {
 export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState<"products" | "orders">("products");
 
-  // 🍔 SCL jadvalidan mahsulotlar
   const [products, setProducts] = useState<any[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
 
@@ -20,13 +18,12 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     title: "",
     price: "",
     image: "",
+    category: "", // 🆕 kategoriya qo‘shildi
   });
 
   const [editingId, setEditingId] = useState<number | null>(null);
 
-  // ==========================
-  // MAHSULOTLARNI O‘QISH (SCL)
-  // ==========================
+  // ====== MAHSULOTLARNI O‘QISH ======
   const loadProducts = async () => {
     const { data, error } = await supabase
       .from("SCL")
@@ -37,9 +34,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     else setProducts(data || []);
   };
 
-  // ==========================
-  // BUYURTMALARNI O‘QISH (orders)
-  // ==========================
+  // ====== BUYURTMALARNI O‘QISH ======
   const loadOrders = async () => {
     const { data, error } = await supabase
       .from("orders")
@@ -50,9 +45,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     else setOrders(data || []);
   };
 
-  // ==========================
-  // REAL-TIME KUZATUV (orders)
-  // ==========================
+  // ====== REAL-TIME BUYURTMA KUZATUV ======
   useEffect(() => {
     loadProducts();
     loadOrders();
@@ -71,31 +64,29 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     };
   }, []);
 
-  // ==========================
-  // MAHSULOT QO‘SHISH
-  // ==========================
+  // ====== MAHSULOT QO‘SHISH ======
   const handleAdd = async () => {
-    if (!form.title || !form.price) return alert("Nom va narx majburiy!");
+    if (!form.title || !form.price || !form.category)
+      return alert("Nom, narx va kategoriya majburiy!");
 
     const { error } = await supabase.from("SCL").insert([
       {
         title: form.title,
         price: form.price,
         image: form.image || null,
+        category: form.category,
       },
     ]);
 
     if (error) alert("❌ Xato: " + error.message);
     else {
       alert("✅ Mahsulot qo‘shildi!");
-      setForm({ title: "", price: "", image: "" });
+      setForm({ title: "", price: "", image: "", category: "" });
       loadProducts();
     }
   };
 
-  // ==========================
-  // TAHRIRLASH
-  // ==========================
+  // ====== TAHRIRLASH ======
   const handleEdit = (p: any) => {
     setForm(p);
     setEditingId(p.id);
@@ -110,6 +101,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         title: form.title,
         price: form.price,
         image: form.image || null,
+        category: form.category,
       })
       .eq("id", editingId);
 
@@ -117,14 +109,12 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     else {
       alert("✅ Yangilandi!");
       setEditingId(null);
-      setForm({ title: "", price: "", image: "" });
+      setForm({ title: "", price: "", image: "", category: "" });
       loadProducts();
     }
   };
 
-  // ==========================
-  // O‘CHIRISH
-  // ==========================
+  // ====== O‘CHIRISH ======
   const handleDelete = async (id: number) => {
     if (!confirm("Haqiqatan ham o‘chirmoqchimisiz?")) return;
 
@@ -177,6 +167,11 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
               onChange={(e) => setForm({ ...form, price: e.target.value })}
             />
             <Input
+              placeholder="Kategoriya (masalan: Burger, Ichimliklar...)"
+              value={form.category}
+              onChange={(e) => setForm({ ...form, category: e.target.value })}
+            />
+            <Input
               placeholder="Rasm URL"
               value={form.image}
               onChange={(e) => setForm({ ...form, image: e.target.value })}
@@ -192,7 +187,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                 variant="outline"
                 onClick={() => {
                   setEditingId(null);
-                  setForm({ title: "", price: "", image: "" });
+                  setForm({ title: "", price: "", image: "", category: "" });
                 }}
               >
                 Bekor qilish
@@ -204,7 +199,10 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
           <div className="grid md:grid-cols-3 gap-4">
             {products.map((p) => (
-              <Card key={p.id} className="p-3 space-y-2">
+              <Card
+                key={p.id}
+                className="p-3 space-y-2 dark:bg-zinc-900 bg-gray-50 transition-all hover:shadow-lg"
+              >
                 {p.image && (
                   <img
                     src={p.image}
@@ -212,8 +210,13 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                     className="rounded-md w-full h-40 object-cover"
                   />
                 )}
-                <h3 className="font-bold text-lg">{p.title}</h3>
-                <p>{p.price} so‘m</p>
+                <div>
+                  <h3 className="font-bold text-lg">{p.title}</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-300">
+                    {p.category || "Kategoriya yo‘q"}
+                  </p>
+                  <p className="font-medium">{p.price} so‘m</p>
+                </div>
                 <div className="flex gap-2">
                   <Button size="sm" onClick={() => handleEdit(p)}>
                     ✏️
@@ -242,22 +245,11 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
             <div className="space-y-3">
               {orders.map((o) => (
                 <Card key={o.id} className="p-3">
-                  <p>
-                    <b>👤 Ism:</b> {o.name}
-                  </p>
-                  <p>
-                    <b>📞 Telefon:</b> {o.phone}
-                  </p>
-                  <p>
-                    <b>📍 Manzil:</b> {o.address}
-                  </p>
-                  <p>
-                    <b>💰 Jami:</b> {o.total} so‘m
-                  </p>
-                  <p>
-                    <b>🕒 Sana:</b>{" "}
-                    {new Date(o.created_at).toLocaleString()}
-                  </p>
+                  <p><b>👤 Ism:</b> {o.name}</p>
+                  <p><b>📞 Telefon:</b> {o.phone}</p>
+                  <p><b>📍 Manzil:</b> {o.address}</p>
+                  <p><b>💰 Jami:</b> {o.total} so‘m</p>
+                  <p><b>🕒 Sana:</b> {new Date(o.created_at).toLocaleString()}</p>
                 </Card>
               ))}
             </div>

@@ -1,14 +1,7 @@
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-
-export interface Product {
-  id: number;
-  name: string;
-  category: string;
-  price: number;
-  image: string;
-  description?: string;
-}
+import { Card, CardContent } from "@/components/ui/card";
+import { useTheme } from "next-themes";
+import type { Product } from "@/types/product";
 
 interface ProductCardProps {
   product: Product;
@@ -16,24 +9,34 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product, onAddToCart }: ProductCardProps) {
+  const { theme } = useTheme();
+
   return (
-    <Card className="bg-white shadow-xl rounded-2xl overflow-hidden hover:scale-105 transition-all duration-300">
-      <img
-        src={product.image}
-        alt={product.name}
-        className="w-full h-56 object-cover"
-      />
-      <div className="p-4 flex flex-col gap-2">
-        <h3 className="text-lg font-semibold">{product.name}</h3>
-        <p className="text-gray-600 text-sm">{product.category}</p>
-        <p className="text-primary font-bold">{product.price} so‘m</p>
+    <Card
+      className={`transition-all duration-300 rounded-2xl shadow-lg ${
+        theme === "dark"
+          ? "bg-zinc-800 text-white border-zinc-700"
+          : "bg-white text-zinc-800 border-gray-200"
+      }`}
+    >
+      <CardContent className="flex flex-col items-center p-5 space-y-3">
+        <img
+          src={product.image || "/placeholder.png"}
+          alt={product.name}
+          className="w-40 h-40 object-cover rounded-xl"
+        />
+        <h3 className="text-xl font-semibold">{product.name}</h3>
+        {product.title && (
+          <p className="text-sm text-muted-foreground">{product.title}</p>
+        )}
+        <p className="text-lg font-bold">{product.price.toLocaleString()} so'm</p>
         <Button
-          className="mt-2 bg-green-600 hover:bg-green-700 text-white"
+          className="w-full mt-2 rounded-xl font-medium transition-all hover:scale-[1.02]"
           onClick={() => onAddToCart(product)}
         >
           Savatga qo‘shish
         </Button>
-      </div>
+      </CardContent>
     </Card>
   );
 }
