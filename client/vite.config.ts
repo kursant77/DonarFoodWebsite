@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 
 export default defineConfig({
-  base: "./",
+  base: "/", // ⚠️ SPA uchun bu yerda "./" emas, "/" bo‘lishi kerak
   plugins: [react()],
   resolve: {
     alias: {
