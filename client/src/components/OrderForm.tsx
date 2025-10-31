@@ -4,10 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-
-// ✅ Backend URL (Render yoki local)
-const API_URL =
-  import.meta.env.VITE_API_URL || "https://donarfood-backend.onrender.com";
+import { supabase } from "../supabase"; // ✅ Supabase ulanishi
 
 interface OrderFormProps {
   total: number;
@@ -29,34 +26,27 @@ export default function OrderForm({ total, onSubmit, onCancel }: OrderFormProps)
     setLoading(true);
 
     try {
-      // 🛒 LocalStorage'dan savatni olish
       const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
 
-      // 🚀 Backendga POST so‘rov
-      const res = await fetch(`${API_URL}/api/orders`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+      // 🚀 Supabase’ga buyurtma saqlash
+      const { data, error } = await supabase.from("orders").insert([
+        {
           name,
           phone,
           address,
           items: cartItems,
           total,
-        }),
-      });
+        },
+      ]);
 
-      const data = await res.json();
+      if (error) throw error;
 
-      if (res.ok && (data.success || data.id)) {
-        alert("✅ Buyurtma muvaffaqiyatli yuborildi!");
-        localStorage.removeItem("cart");
-        onSubmit();
-      } else {
-        alert("❌ Xato: " + (data.message || "Buyurtma yuborishda xato"));
-      }
-    } catch (err) {
-      console.error("❌ Xato (order):", err);
-      alert("⚠️ Server bilan aloqa o‘rnatilmadi.");
+      alert("✅ Buyurtma muvaffaqiyatli yuborildi!");
+      localStorage.removeItem("cart");
+      onSubmit();
+    } catch (err: any) {
+      console.error("❌ Xato:", err.message);
+      alert("Xatolik: " + err.message);
     } finally {
       setLoading(false);
     }

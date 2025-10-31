@@ -1,383 +1,269 @@
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { supabase } from "../supabase"; // ✅ Supabase ulanishi
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  Plus,
-  Edit2,
-  Trash2,
-  LogOut,
-  ShoppingBag,
-  Package,
-  Menu,
-  X,
-} from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 
-const API_URL = import.meta.env.VITE_API_URL || "https://donarfoodwebsite-1.onrender.com";
-
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  category: string;
-  image?: string;
+interface AdminDashboardProps {
+  onLogout: () => Promise<void>;
 }
 
-interface Order {
-  id: string;
-  name: string;
-  phone: string;
-  address: string;
-  items: any[];
-  total: number;
-  date: string;
-}
-
-export default function AdminDashboard({ onLogout }: { onLogout: () => void }) {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState(false);
+export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState<"products" | "orders">("products");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editing, setEditing] = useState<Product | null>(null);
+
+  // 🍔 SCL jadvalidan mahsulotlar
+  const [products, setProducts] = useState<any[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
+
   const [form, setForm] = useState({
-    name: "",
+    title: "",
     price: "",
-    category: "",
-    image: null as File | null,
+    image: "",
   });
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // --- Mahsulotlarni olish ---
+  const [editingId, setEditingId] = useState<number | null>(null);
+
+  // ==========================
+  // MAHSULOTLARNI O‘QISH (SCL)
+  // ==========================
   const loadProducts = async () => {
-    try {
-      const res = await fetch(`https://donarfoodwebsite-1.onrender.com/api/products`);
-      const data = await res.json();
-      setProducts(data);
-    } catch (err) {
-      console.error("❌ Xato (products):", err);
-      alert("⚠️ Server bilan aloqa yo‘q (products)");
-    }
+    const { data, error } = await supabase
+      .from("SCL")
+      .select("*")
+      .order("id", { ascending: true });
+
+    if (error) console.error("❌ Xato (SCL):", error);
+    else setProducts(data || []);
   };
 
-  // --- Buyurtmalarni olish ---
+  // ==========================
+  // BUYURTMALARNI O‘QISH (orders)
+  // ==========================
   const loadOrders = async () => {
-    try {
-      const res = await fetch(`https://donarfoodwebsite-1.onrender.com/api/orders`);
-      const data = await res.json();
-      setOrders(data);
-    } catch (err) {
-      console.error("❌ Xato (orders):", err);
-      alert("⚠️ Server bilan aloqa yo‘q (orders)");
-    }
+    const { data, error } = await supabase
+      .from("orders")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) console.error("❌ Xato (orders):", error);
+    else setOrders(data || []);
   };
 
+  // ==========================
+  // REAL-TIME KUZATUV (orders)
+  // ==========================
   useEffect(() => {
     loadProducts();
     loadOrders();
+
+    const channel = supabase
+      .channel("orders-listener")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "orders" },
+        loadOrders
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
-  // --- Mahsulotni saqlash ---
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  // ==========================
+  // MAHSULOT QO‘SHISH
+  // ==========================
+  const handleAdd = async () => {
+    if (!form.title || !form.price) return alert("Nom va narx majburiy!");
 
-    const formData = new FormData();
-    formData.append("name", form.name);
-    formData.append("price", form.price);
-    formData.append("category", form.category);
-    if (form.image) formData.append("image", form.image);
+    const { error } = await supabase.from("SCL").insert([
+      {
+        title: form.title,
+        price: form.price,
+        image: form.image || null,
+      },
+    ]);
 
-    const url = editing
-      ? `${API_URL}/api/products/${editing.id}`
-      : `${API_URL}/api/products`;
-    const method = editing ? "PUT" : "POST";
-
-    try {
-      const res = await fetch(url, { method, body: formData });
-      const data = await res.json();
-
-      if (res.ok) {
-        await loadProducts();
-        alert(editing ? "✅ Mahsulot yangilandi!" : "✅ Yangi mahsulot qo‘shildi!");
-        setIsModalOpen(false);
-        setEditing(null);
-        setForm({ name: "", price: "", category: "", image: null });
-      } else {
-        alert("❌ Xato: " + (data.message || "Server xatosi"));
-      }
-    } catch (err) {
-      console.error("❌ Xato (submit):", err);
-      alert("⚠️ Server bilan aloqa yo‘q");
-    } finally {
-      setLoading(false);
+    if (error) alert("❌ Xato: " + error.message);
+    else {
+      alert("✅ Mahsulot qo‘shildi!");
+      setForm({ title: "", price: "", image: "" });
+      loadProducts();
     }
   };
 
-  // --- Mahsulotni o‘chirish ---
-  const handleDelete = async (id: string) => {
-    if (!confirm("Mahsulotni o‘chirmoqchimisiz?")) return;
-    try {
-      const res = await fetch(`${API_URL}/api/products/${id}`, {
-        method: "DELETE",
-      });
-      const data = await res.json();
-      if (res.ok) {
-        alert("🗑️ Mahsulot o‘chirildi!");
-        await loadProducts();
-      } else {
-        alert("❌ Xato: " + (data.message || "O‘chirib bo‘lmadi"));
-      }
-    } catch (err) {
-      console.error("❌ Xato (delete):", err);
-      alert("⚠️ Server bilan aloqa yo‘q");
+  // ==========================
+  // TAHRIRLASH
+  // ==========================
+  const handleEdit = (p: any) => {
+    setForm(p);
+    setEditingId(p.id);
+  };
+
+  const handleUpdate = async () => {
+    if (!editingId) return;
+
+    const { error } = await supabase
+      .from("SCL")
+      .update({
+        title: form.title,
+        price: form.price,
+        image: form.image || null,
+      })
+      .eq("id", editingId);
+
+    if (error) alert("❌ Xato: " + error.message);
+    else {
+      alert("✅ Yangilandi!");
+      setEditingId(null);
+      setForm({ title: "", price: "", image: "" });
+      loadProducts();
+    }
+  };
+
+  // ==========================
+  // O‘CHIRISH
+  // ==========================
+  const handleDelete = async (id: number) => {
+    if (!confirm("Haqiqatan ham o‘chirmoqchimisiz?")) return;
+
+    const { error } = await supabase.from("SCL").delete().eq("id", id);
+    if (error) alert("❌ Xato: " + error.message);
+    else {
+      alert("🗑️ O‘chirildi!");
+      loadProducts();
     }
   };
 
   return (
-    <div className="flex h-screen bg-muted/30 flex-col md:flex-row">
-      {/* Mobil navbar */}
-      <header className="md:hidden flex items-center justify-between p-4 border-b bg-background sticky top-0 z-10">
-        <div className="text-xl font-bold">🍔 Donar Food</div>
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-        >
-          {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+    <div className="p-6 max-w-6xl mx-auto">
+      <div className="flex justify-between mb-6">
+        <div className="flex gap-3">
+          <Button
+            variant={activeTab === "products" ? "default" : "outline"}
+            onClick={() => setActiveTab("products")}
+          >
+            🍔 Mahsulotlar
+          </Button>
+          <Button
+            variant={activeTab === "orders" ? "default" : "outline"}
+            onClick={() => setActiveTab("orders")}
+          >
+            🧾 Buyurtmalar
+          </Button>
+        </div>
+
+        <Button variant="destructive" onClick={onLogout}>
+          🚪 Chiqish
         </Button>
-      </header>
+      </div>
 
-      {/* Sidebar */}
-      <aside
-        className={`${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0 transition-transform duration-300 fixed md:static z-20 md:z-auto
-        w-64 bg-background border-r flex flex-col h-full`}
-      >
-        <div className="p-6 border-b hidden md:block">
-          <div className="text-2xl font-bold text-primary">🍔 Donar Food</div>
-          <p className="text-sm text-muted-foreground mt-1">Admin Panel</p>
-        </div>
+      {/* PRODUCTS */}
+      {activeTab === "products" && (
+        <Card className="p-4 space-y-4">
+          <h2 className="text-xl font-semibold">🍟 Mahsulot qo‘shish / tahrirlash</h2>
 
-        <nav className="flex-1 p-4 space-y-2">
-          <Button
-            variant={activeTab === "products" ? "default" : "ghost"}
-            className="w-full justify-start"
-            onClick={() => {
-              setActiveTab("products");
-              setSidebarOpen(false);
-            }}
-          >
-            <Package className="h-4 w-4 mr-2" /> Mahsulotlar
-          </Button>
-          <Button
-            variant={activeTab === "orders" ? "default" : "ghost"}
-            className="w-full justify-start"
-            onClick={() => {
-              setActiveTab("orders");
-              setSidebarOpen(false);
-            }}
-          >
-            <ShoppingBag className="h-4 w-4 mr-2" /> Buyurtmalar
-          </Button>
-        </nav>
+          <div className="grid md:grid-cols-2 gap-3">
+            <Input
+              placeholder="Nom..."
+              value={form.title}
+              onChange={(e) => setForm({ ...form, title: e.target.value })}
+            />
+            <Input
+              type="number"
+              placeholder="Narx..."
+              value={form.price}
+              onChange={(e) => setForm({ ...form, price: e.target.value })}
+            />
+            <Input
+              placeholder="Rasm URL"
+              value={form.image}
+              onChange={(e) => setForm({ ...form, image: e.target.value })}
+            />
+          </div>
 
-        <div className="p-4 border-t">
-          <Button
-            variant="outline"
-            className="w-full justify-start"
-            onClick={onLogout}
-          >
-            <LogOut className="h-4 w-4 mr-2" /> Chiqish
-          </Button>
-        </div>
-      </aside>
-
-      {/* Main */}
-      <main className="flex-1 overflow-y-auto p-4 md:p-8 mt-14 md:mt-0">
-        {activeTab === "products" && (
-          <>
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
-              <h1 className="text-2xl font-bold">Mahsulotlar boshqaruvi</h1>
+          <div className="flex gap-3">
+            <Button onClick={editingId ? handleUpdate : handleAdd}>
+              {editingId ? "💾 Yangilash" : "➕ Qo‘shish"}
+            </Button>
+            {editingId && (
               <Button
-                onClick={() => {
-                  setEditing(null);
-                  setForm({ name: "", price: "", category: "", image: null });
-                  setIsModalOpen(true);
-                }}
-              >
-                <Plus className="h-4 w-4 mr-2" /> Qo‘shish
-              </Button>
-            </div>
-
-            <Card className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Rasm</TableHead>
-                    <TableHead>Nomi</TableHead>
-                    <TableHead>Kategoriya</TableHead>
-                    <TableHead>Narx</TableHead>
-                    <TableHead className="text-right">Amallar</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {products.map((p) => (
-                    <TableRow key={p.id}>
-                      <TableCell>
-                        {p.image ? (
-                          <img
-                            src={`${API_URL}${p.image}`}
-                            className="w-14 h-14 rounded object-cover"
-                          />
-                        ) : (
-                          "—"
-                        )}
-                      </TableCell>
-                      <TableCell>{p.name}</TableCell>
-                      <TableCell>{p.category}</TableCell>
-                      <TableCell>{p.price} so‘m</TableCell>
-                      <TableCell className="text-right space-x-1">
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          onClick={() => {
-                            setEditing(p);
-                            setForm({
-                              name: p.name,
-                              price: String(p.price),
-                              category: p.category,
-                              image: null,
-                            });
-                            setIsModalOpen(true);
-                          }}
-                        >
-                          <Edit2 className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          onClick={() => handleDelete(p.id)}
-                        >
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Card>
-          </>
-        )}
-
-        {activeTab === "orders" && (
-          <>
-            <h1 className="text-2xl font-bold mb-6">Buyurtmalar tarixi</h1>
-            {orders.length === 0 && <p>Hozircha buyurtmalar yo‘q.</p>}
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {orders.map((order) => (
-                <Card key={order.id} className="p-4">
-                  <div className="flex justify-between mb-2">
-                    <div>
-                      <p className="font-bold">{order.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {order.phone} — {order.address}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-mono font-bold text-primary">
-                        {order.total.toLocaleString()} so‘m
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {new Date(order.date).toLocaleString()}
-                      </p>
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          </>
-        )}
-      </main>
-
-      {/* Modal */}
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>
-              {editing ? "Mahsulotni tahrirlash" : "Yangi mahsulot"}
-            </DialogTitle>
-          </DialogHeader>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <Label>Nomi</Label>
-              <Input
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                required
-              />
-            </div>
-            <div>
-              <Label>Kategoriya</Label>
-              <Input
-                value={form.category}
-                onChange={(e) => setForm({ ...form, category: e.target.value })}
-                required
-              />
-            </div>
-            <div>
-              <Label>Narx</Label>
-              <Input
-                type="number"
-                value={form.price}
-                onChange={(e) => setForm({ ...form, price: e.target.value })}
-                required
-              />
-            </div>
-            <div>
-              <Label>Rasm</Label>
-              <Input
-                type="file"
-                accept="image/*"
-                onChange={(e) =>
-                  setForm({ ...form, image: e.target.files?.[0] || null })
-                }
-              />
-            </div>
-
-            <div className="flex gap-2 pt-4">
-              <Button
-                type="button"
                 variant="outline"
-                className="flex-1"
-                onClick={() => setIsModalOpen(false)}
+                onClick={() => {
+                  setEditingId(null);
+                  setForm({ title: "", price: "", image: "" });
+                }}
               >
                 Bekor qilish
               </Button>
-              <Button type="submit" className="flex-1" disabled={loading}>
-                {loading ? "Saqlanmoqda..." : "Saqlash"}
-              </Button>
+            )}
+          </div>
+
+          <hr className="my-4" />
+
+          <div className="grid md:grid-cols-3 gap-4">
+            {products.map((p) => (
+              <Card key={p.id} className="p-3 space-y-2">
+                {p.image && (
+                  <img
+                    src={p.image}
+                    alt={p.title}
+                    className="rounded-md w-full h-40 object-cover"
+                  />
+                )}
+                <h3 className="font-bold text-lg">{p.title}</h3>
+                <p>{p.price} so‘m</p>
+                <div className="flex gap-2">
+                  <Button size="sm" onClick={() => handleEdit(p)}>
+                    ✏️
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={() => handleDelete(p.id)}
+                  >
+                    🗑️
+                  </Button>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </Card>
+      )}
+
+      {/* ORDERS */}
+      {activeTab === "orders" && (
+        <Card className="p-4 space-y-4">
+          <h2 className="text-xl font-semibold mb-4">🧾 Buyurtmalar ro‘yxati</h2>
+          {orders.length === 0 ? (
+            <p>Hozircha buyurtma yo‘q.</p>
+          ) : (
+            <div className="space-y-3">
+              {orders.map((o) => (
+                <Card key={o.id} className="p-3">
+                  <p>
+                    <b>👤 Ism:</b> {o.name}
+                  </p>
+                  <p>
+                    <b>📞 Telefon:</b> {o.phone}
+                  </p>
+                  <p>
+                    <b>📍 Manzil:</b> {o.address}
+                  </p>
+                  <p>
+                    <b>💰 Jami:</b> {o.total} so‘m
+                  </p>
+                  <p>
+                    <b>🕒 Sana:</b>{" "}
+                    {new Date(o.created_at).toLocaleString()}
+                  </p>
+                </Card>
+              ))}
             </div>
-          </form>
-        </DialogContent>
-      </Dialog>
+          )}
+        </Card>
+      )}
     </div>
   );
 }

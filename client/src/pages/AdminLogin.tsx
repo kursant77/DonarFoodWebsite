@@ -1,105 +1,80 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card } from "@/components/ui/card";
-import { Lock, User } from "lucide-react";
-import { useState } from "react";
-
-// ✅ Backend URL .env fayldan olinadi
-const API_URL = import.meta.env.VITE_API_URL || "https://donarfoodwebsite-1.onrender.com";
 
 interface AdminLoginProps {
-  onLogin: (username: string, password: string) => void;
+  /**
+   * onLogin funksiyasi:
+   * username va password ni qabul qiladi va boolean qaytaradi
+   * true → login muvaffaqiyatli
+   * false → login muvaffaqiyatsiz
+   */
+  onLogin: (username: string, password: string) => Promise<boolean>;
 }
 
 export default function AdminLogin({ onLogin }: AdminLoginProps) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     setLoading(true);
-    setError("");
 
     try {
-      // ✅ API_URL ni .env'dan o‘qib ishlatamiz
-      const res = await fetch(`${API_URL}/api/admin/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
-
-      const data = await res.json();
-      console.log("🧠 Login response:", data);
-
-      if (data.success === true) {
-        localStorage.setItem("isAdmin", "true");
-        onLogin(username, password);
-      } else {
-        setError("❌ Noto‘g‘ri foydalanuvchi nomi yoki parol!");
+      const success = await onLogin(username, password);
+      if (!success) {
+        setError("Username yoki parol noto‘g‘ri!");
       }
     } catch (err) {
-      console.error("⚠️ Serverga ulanib bo‘lmadi:", err);
-      setError("⚠️ Serverga ulanib bo‘lmadi.");
+      console.error(err);
+      setError("Server bilan bog‘lanishda xato yuz berdi!");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted/30 px-4">
-      <Card className="w-full max-w-md p-8">
-        <div className="text-center mb-8">
-          <div className="text-4xl mb-2">🍔</div>
-          <h1 className="text-3xl font-bold mb-2">Donar Food Admin</h1>
-          <p className="text-muted-foreground">
-            Kirish uchun ma'lumotlarni kiriting
-          </p>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm space-y-5"
+      >
+        <h1 className="text-2xl font-semibold text-center">Admin Panelga kirish</h1>
+
+        <div>
+          <Label htmlFor="username">Username</Label>
+          <Input
+            id="username"
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label htmlFor="username" className="flex items-center gap-2">
-              <User className="h-4 w-4" />
-              Foydalanuvchi nomi
-            </Label>
-            <Input
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="admin"
-              required
-            />
-          </div>
+        <div>
+          <Label htmlFor="password">Parol</Label>
+          <Input
+            id="password"
+            type="password"
+            placeholder="Parolni kiriting"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
 
-          <div>
-            <Label htmlFor="password" className="flex items-center gap-2">
-              <Lock className="h-4 w-4" />
-              Parol
-            </Label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-            />
-          </div>
+        {error && <p className="text-red-500 text-sm">{error}</p>}
 
-          {error && (
-            <p className="text-red-500 text-sm font-medium text-center">
-              {error}
-            </p>
-          )}
-
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Kirilmoqda..." : "Kirish"}
-          </Button>
-        </form>
-      </Card>
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading ? "Kirish..." : "Kirish"}
+        </Button>
+      </form>
     </div>
   );
 }

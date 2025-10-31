@@ -1,7 +1,8 @@
 import { useEffect, useState, useMemo } from "react";
 import ProductCard from "@/components/ProductCard";
 import CategoryFilter from "@/components/CategoryFilter";
-import type { Product } from "@shared/schema";
+import { supabase } from "../supabase";
+import type { Product } from "@/types/product";
 
 interface MenuProps {
   onAddToCart: (product: Product) => void;
@@ -13,33 +14,30 @@ export default function Menu({ onAddToCart }: MenuProps) {
   const [selectedCategory, setSelectedCategory] = useState("Hammasi");
   const [error, setError] = useState("");
 
-  // ✅ Backend URL .env fayldan olinadi
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
-
-  // 🧩 Backenddan mahsulotlarni olish
+  // 🧩 Supabase’dan mahsulotlarni olish
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const res = await fetch(`${API_URL}/api/products`);
-        if (!res.ok) throw new Error("Mahsulotlarni olishda xato yuz berdi.");
-        const data = await res.json();
-        setProducts(data);
+        const { data, error } = await supabase.from("SCL").select("*");
+        if (error) throw error;
+        setProducts(data || []);
       } catch (err) {
-        console.error("❌ API xato:", err);
-        setError("Mahsulotlarni serverdan olishda xatolik yuz berdi.");
+        console.error("❌ Supabase xato:", err);
+        setError("Mahsulotlarni olishda xatolik yuz berdi.");
       } finally {
         setLoading(false);
       }
     }
-    fetchProducts();
-  }, [API_URL]);
 
-  // 🔍 Kategoriyalarni aniqlash (dublikatlarni olib tashlaymiz)
+    fetchProducts();
+  }, []);
+
+  // 🔍 Kategoriyalarni aniqlash (agar category maydoni bo‘lmasa — “Hammasi” qoldiramiz)
   const categories = useMemo(() => {
     const allCats = Array.from(
-      new Set(products.map((p) => p.category).filter(Boolean))
+      new Set(products.map((p) => p.category || "").filter(Boolean))
     );
-    return allCats.includes("Hammasi") ? allCats : [...allCats];
+    return allCats.length ? ["Hammasi", ...allCats] : ["Hammasi"];
   }, [products]);
 
   // 🔎 Tanlangan kategoriya bo‘yicha filterlash
@@ -85,7 +83,9 @@ export default function Menu({ onAddToCart }: MenuProps) {
                 ...product,
                 image: product.image?.startsWith("http")
                   ? product.image
-                  : `${API_URL}${product.image}`,
+                  : product.image
+                    ? `https://omdgrhymirjfcigfuzcb.supabase.co/storage/v1/object/public/menu-images/${product.image}`
+                    : "/no-image.png",
               }}
               onAddToCart={onAddToCart}
             />

@@ -1,8 +1,8 @@
 import { Card } from "@/components/ui/card";
 import { Heart, Users, Award } from "lucide-react";
-import interior1 from "@assets/stock_images/modern_restaurant_in_69967ad9.jpg";
-import interior2 from "@assets/stock_images/modern_restaurant_in_68eda206.jpg";
-import interior3 from "@assets/stock_images/modern_restaurant_in_6cc8715e.jpg";
+import interior1 from "@assets/stock_images/rasim1.jpg";
+import interior2 from "@assets/stock_images/rasim2.jpg";
+import interior3 from "@assets/stock_images/rasim3.jpg";
 
 export default function About() {
   const values = [
@@ -27,12 +27,9 @@ export default function About() {
     <div className="max-w-7xl mx-auto px-4 py-12">
       {/* Header */}
       <div className="text-center mb-16">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4">
-          Biz haqimizda
-        </h1>
+        <h1 className="text-4xl md:text-5xl font-bold mb-4">Biz haqimizda</h1>
         <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-          Donar FooD - bu tezkor xizmat, mazali taom va do'stona muhit uchun 
-          eng yaxshi tanlov
+          Donar FooD - bu tezkor xizmat, mazali taom va do'stona muhit uchun eng yaxshi tanlov
         </p>
       </div>
 
@@ -42,20 +39,16 @@ export default function About() {
           <h2 className="text-3xl font-bold mb-6">Bizning tarix</h2>
           <div className="space-y-4 text-lg leading-relaxed text-muted-foreground">
             <p>
-              Donar Foof 2025 yilda tashkil etilgan va bugungi kunda xorazimning 
-              eng mashhur fast food kafeleridan biriga aylangan. Bizning maqsadimiz 
-              oddiy - har bir mijozga mazali, sifatli va tez tayyorlangan taomlarni 
-              taqdim etish.
+              Donar FooD 2025 yilda tashkil etilgan va bugungi kunda Xorazmning eng mashhur fast food kafelaridan biriga aylangan.
+              Bizning maqsadimiz — har bir mijozga mazali, sifatli va tez tayyorlangan taomlarni taqdim etish.
             </p>
             <p>
-              Biz an'anaviy retseptlar va zamonaviy texnologiyalarni birlashtirib, 
-              noyob ta'mga ega taomlar yaratamiz. Har bir lavash, burger yoki doner 
-              bizning oshpazlarimiz tomonidan sevgi bilan tayyorlanadi.
+              Biz an'anaviy retseptlar va zamonaviy texnologiyalarni birlashtirib, noyob ta'mga ega taomlar yaratamiz.
+              Har bir lavash, burger yoki doner bizning oshpazlarimiz tomonidan sevgi bilan tayyorlanadi.
             </p>
             <p>
-              Bugungi kunda biz kuniga 500+ dan ortiq buyurtmalarni bajaramiz va 
-              mijozlarimizning ishonchini qozonganmiz. Bizning jamoamiz siz uchun 
-              har doim tayyor!
+              Bugungi kunda biz kuniga 500+ dan ortiq buyurtmalarni bajaramiz va mijozlarimizning ishonchini qozonganmiz.
+              Bizning jamoamiz siz uchun har doim tayyor!
             </p>
           </div>
         </Card>
@@ -82,19 +75,19 @@ export default function About() {
           <div className="md:col-span-2">
             <img
               src={interior1}
-              alt="Donar Foof interior"
+              alt="Donar FooD interior"
               className="w-full h-full object-cover rounded-lg hover:scale-105 transition-transform duration-300"
             />
           </div>
           <div className="space-y-6">
             <img
               src={interior2}
-              alt="Donar Foof dining area"
+              alt="Donar FooD dining area"
               className="w-full h-48 object-cover rounded-lg hover:scale-105 transition-transform duration-300"
             />
             <img
               src={interior3}
-              alt="Donar Foof atmosphere"
+              alt="Donar FooD atmosphere"
               className="w-full h-48 object-cover rounded-lg hover:scale-105 transition-transform duration-300"
             />
           </div>

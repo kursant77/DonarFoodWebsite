@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { X, Minus, Plus, ShoppingBag } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import type { Product } from "@shared/schema";
+import type { Product } from "@/types/product";
 import { useState } from "react";
 import OrderForm from "@/components/OrderForm";
 
@@ -13,9 +13,10 @@ interface ShoppingCartProps {
   isOpen: boolean;
   onClose: () => void;
   items: CartItem[];
-  onUpdateQuantity: (productId: string, quantity: number) => void;
-  onRemoveItem: (productId: string) => void;
+  onUpdateQuantity: (productId: number, quantity: number) => void;
+  onRemoveItem: (productId: number) => void;
 }
+
 
 export default function ShoppingCart({
   isOpen,
@@ -81,7 +82,7 @@ export default function ShoppingCart({
                       src={
                         item.image?.startsWith("http")
                           ? item.image
-                          : import.meta.env.VITE_API_URL + item.image
+                          : `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/product-images/${item.image}`
                       }
                       alt={item.name}
                       className="w-20 h-20 object-cover rounded-md"
@@ -162,7 +163,7 @@ export default function ShoppingCart({
         )}
       </div>
 
-      {/* ✅ Order Form Modal */}
+      {/* Order Form Modal */}
       {isOrderFormOpen && (
         <OrderForm
           total={total}
