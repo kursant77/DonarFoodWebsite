@@ -6,10 +6,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { supabase } from "../supabase";
 import axios from "axios";
+import { useToast } from "@/hooks/use-toast";
 
 interface OrderFormProps {
   total: number;
-  onSubmit: () => void; // bu ShoppingCart ichida handleOrderSubmit() ni bildiradi
+  onSubmit: () => void; // ShoppingCart ichidagi handleOrderSubmit
   onCancel: () => void;
 }
 
@@ -19,6 +20,8 @@ export default function OrderForm({ total, onSubmit, onCancel }: OrderFormProps)
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const { toast } = useToast();
+
   // 🔐 Telegram ma’lumotlari
   const BOT_TOKEN = "8217777940:AAEtHgcJq95sXehj2vsyH9CFf5PfpL2pI84";
   const CHAT_ID = "5865994146";
@@ -26,10 +29,14 @@ export default function OrderForm({ total, onSubmit, onCancel }: OrderFormProps)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !phone || !address)
-      return alert("Barcha maydonlarni to‘ldiring!");
+
+    if (!name || !phone || !address) {
+      toast({ title: "Barcha maydonlarni to‘ldiring!", variant: "destructive" });
+      return;
+    }
 
     setLoading(true);
+
     try {
       const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
 
@@ -40,7 +47,7 @@ export default function OrderForm({ total, onSubmit, onCancel }: OrderFormProps)
 
       if (error) throw error;
 
-      // 🍔 Telegram xabari
+      // 🍔 Telegram xabari tayyorlash
       const itemsList = cartItems
         .map(
           (item: any) =>
@@ -66,13 +73,13 @@ ${itemsList}
         text: message,
       });
 
-      // ✅ Faqat 1 joyda alert va submit
-      alert("✅ Buyurtma yuborildi!");
+      // ✅ Hot-toast bilan muvaffaqiyat
+      toast({ title: "Buyurtma muvaffaqiyatli yuborildi!" });
       localStorage.removeItem("cart");
-      onSubmit(); // faqat ShoppingCart ichidagi handleOrderSubmit ishlaydi
+      onSubmit(); // ShoppingCart ichidagi handleOrderSubmit
     } catch (err: any) {
       console.error("❌ Xato:", err.message);
-      alert("Xatolik: " + err.message);
+      toast({ title: "Xatolik yuz berdi", description: err.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
