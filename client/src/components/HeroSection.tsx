@@ -37,12 +37,12 @@ export default function HeroSection({ onOrderClick }: HeroSectionProps) {
         <div className="max-w-3xl">
           <div className="inline-block mb-4 animate-in fade-in slide-in-from-top-4 duration-700">
             <Badge className="text-lg px-4 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full hover:scale-105 transition-transform duration-300">
-              🍔 Doner Food
+              🍔 Fast food
             </Badge>
           </div>
 
           <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight animate-in fade-in slide-in-from-left-8 duration-1000 delay-200">
-            Fast food –{" "}
+            Döner Food –{" "}
             <span className="text-primary bg-gradient-to-r from-primary to-orange-500 bg-clip-text text-transparent animate-pulse">
               tez, mazali, issiq
             </span>
@@ -76,10 +76,26 @@ export default function HeroSection({ onOrderClick }: HeroSectionProps) {
           </div>
 
           {/* 🔹 Statistikalar - animatsiyalar bilan */}
-          <div className="mt-16 grid grid-cols-3 gap-8">
-            <AnimatedStat number={100} label="Kunlik buyurtmalar" icon={TrendingUp} delay={600} />
-            <AnimatedStat number={20} label="Taomlar" icon={Utensils} delay={800} />
-            <AnimatedStat number={5} label="Reyting" icon={Star} delay={1000} suffix="★" />
+          <div className="mt-16 grid grid-cols-3 gap-3 sm:gap-5 md:gap-8">
+            <AnimatedStat
+              number={100}
+              label="Kunlik buyurtmalar"
+              icon={TrendingUp}
+              delay={600}
+            />
+            <AnimatedStat
+              number={20}
+              label="Taomlar"
+              icon={Utensils}
+              delay={800}
+            />
+            <AnimatedStat
+              number={5}
+              label="Reyting"
+              icon={Star}
+              delay={1000}
+              suffix="★"
+            />
           </div>
         </div>
       </div>
@@ -87,20 +103,26 @@ export default function HeroSection({ onOrderClick }: HeroSectionProps) {
   );
 }
 
-function Badge({ children, className }: { children: React.ReactNode; className?: string }) {
+function Badge({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return <div className={className}>{children}</div>;
 }
 
-function AnimatedStat({ 
-  number, 
-  label, 
-  icon: Icon, 
+function AnimatedStat({
+  number,
+  label,
+  icon: Icon,
   delay = 0,
   suffix = "+",
   prefix = "",
-}: { 
-  number: number; 
-  label: string; 
+}: {
+  number: number;
+  label: string;
   icon: any;
   delay?: number;
   suffix?: string;
@@ -118,27 +140,27 @@ function AnimatedStat({
   return (
     <div
       ref={elementRef}
-      className={`group relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br from-background to-accent/10 border border-border/50 hover:border-primary/50 transition-all duration-500 hover:scale-105 hover:shadow-2xl ${
+      className={`group relative overflow-hidden rounded-xl sm:rounded-2xl p-3 sm:p-5 md:p-7 bg-gradient-to-br from-background to-accent/10 border border-border/50 hover:border-primary/50 transition-all duration-500 hover:scale-105 hover:shadow-2xl ${
         isVisible ? "animate-in fade-in slide-in-from-bottom-8" : "opacity-0"
       }`}
       style={{ animationDelay: `${delay}ms` }}
     >
       {/* Decorative gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-      
+
       {/* Icon */}
-      <div className="relative z-10 mb-4">
-        <div className="inline-flex p-3 rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300">
-          <Icon className="h-6 w-6 text-primary group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300" />
+      <div className="relative z-10 mb-2 sm:mb-3 md:mb-4">
+        <div className="inline-flex p-1.5 sm:p-2.5 md:p-3.5 rounded-lg sm:rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300">
+          <Icon className="h-4 w-4 sm:h-6 sm:w-6 md:h-7 md:w-7 text-primary group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300" />
         </div>
       </div>
 
       {/* Number */}
       <div className="relative z-10">
-        <div className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-primary via-orange-500 to-red-500 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300 inline-block">
+        <div className="text-xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold bg-gradient-to-r from-primary via-orange-500 to-red-500 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300 inline-block break-words leading-tight">
           {displayValue}
         </div>
-        <div className="text-sm text-muted-foreground mt-2 group-hover:text-foreground transition-colors duration-300">
+        <div className="text-xs sm:text-sm md:text-base text-muted-foreground mt-1.5 sm:mt-2 md:mt-3 group-hover:text-foreground transition-colors duration-300 break-words leading-tight">
           {label}
         </div>
       </div>

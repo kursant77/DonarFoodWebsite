@@ -10,6 +10,7 @@ import { Loader2 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ShoppingCart from "@/components/ShoppingCart";
+import Snowflakes from "@/components/Snowflakes";
 
 import type { Product } from "@/types/product";
 import { supabase } from "@/lib/supabaseClient";
@@ -192,6 +193,8 @@ function AppContent() {
           onCartClick={() => setIsCartOpen(true)}
         />
       )}
+
+      {!isAdminRoute && <Snowflakes />}
 
       <main className={isAdminRoute ? "" : "min-h-screen"}>
         <Suspense fallback={<LoadingSpinner />}>

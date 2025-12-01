@@ -43,10 +43,10 @@ export default function Header({ cartItemCount, onCartClick }: HeaderProps) {
   ];
 
   return (
-    <header 
+    <header
       className={`sticky top-0 z-50 w-full border-b transition-all duration-500 ${
-        scrolled 
-          ? "bg-background/95 backdrop-blur-md shadow-lg" 
+        scrolled
+          ? "bg-background/95 backdrop-blur-md shadow-lg"
           : "bg-background/80 backdrop-blur-sm"
       }`}
     >
@@ -54,7 +54,7 @@ export default function Header({ cartItemCount, onCartClick }: HeaderProps) {
         {/* Logo with animation */}
         <Link href="/" className="flex items-center gap-2 group">
           <div className="text-xl sm:text-2xl font-bold text-primary transition-transform duration-300 group-hover:scale-110 group-active:scale-95">
-            🍔 Doner Food
+            🍔 Döner Food
           </div>
         </Link>
 
@@ -64,8 +64,8 @@ export default function Header({ cartItemCount, onCartClick }: HeaderProps) {
             <Link key={link.href} href={link.href}>
               <span
                 className={`text-sm font-medium transition-all duration-300 hover-elevate px-3 py-2 rounded-md cursor-pointer relative group ${
-                  location === link.href 
-                    ? "text-primary" 
+                  location === link.href
+                    ? "text-primary"
                     : "text-foreground hover:text-primary"
                 }`}
                 style={{ animationDelay: `${index * 50}ms` }}
@@ -89,19 +89,19 @@ export default function Header({ cartItemCount, onCartClick }: HeaderProps) {
             onClick={onCartClick}
             className="relative touch-manipulation active:scale-95 transition-transform duration-200"
           >
-            <ShoppingCart 
+            <ShoppingCart
               className={`h-5 w-5 transition-all duration-500 ${
-                cartAnimation 
-                  ? "animate-bounce scale-150 text-primary drop-shadow-lg" 
+                cartAnimation
+                  ? "animate-bounce scale-150 text-primary drop-shadow-lg"
                   : ""
-              }`} 
+              }`}
             />
             {cartItemCount > 0 && (
               <Badge
                 variant="destructive"
                 className={`absolute -top-0.5 -right-0.5 h-5 min-w-[1.25rem] flex items-center justify-center px-1 text-xs font-semibold transition-all duration-500 ${
-                  cartAnimation 
-                    ? "animate-pulse scale-150 ring-2 ring-primary ring-offset-2" 
+                  cartAnimation
+                    ? "animate-pulse scale-150 ring-2 ring-primary ring-offset-2"
                     : ""
                 }`}
               >

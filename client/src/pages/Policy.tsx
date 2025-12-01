@@ -3,139 +3,434 @@ import React from "react";
 
 const Policy = () => {
   return (
-    <div className="max-w-5xl mx-auto p-8 space-y-8">
-      <h1 className="text-4xl font-bold text-center mb-8">Privacy Policy</h1>
+    <div className="max-w-5xl mx-auto p-4 sm:p-8 space-y-12">
+      {/* FOYDALANISH SHARTLARI */}
+      <section className="space-y-6">
+        <h1 className="text-3xl sm:text-4xl font-bold text-center mb-8">
+          FOYDALANISH SHARTLARI
+        </h1>
 
-      <section>
-        <h2 className="text-2xl font-semibold mb-2">1. Introduction</h2>
-        <p>
-          Welcome to DonarFood! Your privacy is extremely important to us. This Privacy Policy explains
-          how we collect, use, and protect your personal information when you use our website, mobile
-          applications, or services.
+        <p className="text-muted-foreground">
+          Amal qiladi:{" "}
+          <span className="text-primary font-semibold">donerfood.uz</span>{" "}
+          saytida
         </p>
+
+        <div className="space-y-6">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4">
+              1. UMUMIY MA'LUMOT
+            </h2>
+            <div className="space-y-3 text-muted-foreground">
+              <p>
+                <strong className="text-foreground">1.1.</strong> Ushbu
+                Foydalanish shartlari (Shartlar) donerfood.uz saytining barcha
+                foydalanuvchilari uchun majburiy hisoblanadi.
+              </p>
+              <p>
+                <strong className="text-foreground">1.2.</strong> Saytdan
+                foydalanish orqali foydalanuvchi ushbu Shartlarga to'liq rozilik
+                bildirgan hisoblanadi.
+              </p>
+              <p>
+                <strong className="text-foreground">1.3.</strong> Agar
+                foydalanuvchi ushbu Shartlar bilan rozi bo'lmasa, sayt
+                xizmatlaridan foydalanmasligi kerak.
+              </p>
+              <p>
+                <strong className="text-foreground">1.4.</strong> donerfood.uz —
+                onlayn tarzda ovqat buyurtma berish va yetkazib berish xizmatini
+                taqdim etuvchi platforma hisoblanadi.
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4">
+              2. SAYTDAN FOYDALANISH QOIDALARI
+            </h2>
+            <div className="space-y-3 text-muted-foreground">
+              <p>
+                <strong className="text-foreground">2.1.</strong> Foydalanuvchi
+                saytdan faqat qonuniy maqsadlarda foydalanishi kerak.
+              </p>
+              <p>
+                <strong className="text-foreground">2.2.</strong> Foydalanuvchi
+                buyurtma berishda o'zining haqiqiy ism-familiyasi, aloqa raqami
+                va manzilini kiritishi shart.
+              </p>
+              <p>
+                <strong className="text-foreground">2.3.</strong> Noto'g'ri
+                ma'lumot kiritish yoki yolg'on buyurtma berish holatlari
+                aniqlansa, foydalanuvchi donerfood.uz xizmatlaridan vaqtincha
+                yoki butunlay chetlashtirilishi mumkin.
+              </p>
+              <p>
+                <strong className="text-foreground">2.4.</strong> Foydalanuvchi
+                saytning texnik tizimiga zarar yetkazuvchi harakatlarni
+                (xakerlik, zararli dastur joylash, trafikni buzish va hokazo)
+                amalga oshirmasligi kerak.
+              </p>
+              <p>
+                <strong className="text-foreground">2.5.</strong> Sayt
+                ma'muriyati har qanday noqonuniy faoliyatni aniqlasa, tegishli
+                huquqiy chora ko'rish huquqiga ega.
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4">
+              3. BUYURTMALAR VA TO'LOVLAR
+            </h2>
+            <div className="space-y-3 text-muted-foreground">
+              <p>
+                <strong className="text-foreground">3.1.</strong> Buyurtma faqat
+                foydalanuvchi tomonidan taqdim etilgan to'liq va aniq
+                ma'lumotlar asosida qabul qilinadi.
+              </p>
+              <p>
+                <strong className="text-foreground">3.2.</strong> donerfood.uz
+                buyurtmani tasdiqlashdan oldin foydalanuvchiga telefon orqali
+                bog'lanib, ma'lumotlarni aniqlashtirishi mumkin.
+              </p>
+              <p>
+                <strong className="text-foreground">3.3.</strong> To'lov
+                usullari (naqd, karta orqali yoki boshqa shakllar) sayt
+                tomonidan belgilangan tartibda amalga oshiriladi.
+              </p>
+              <p>
+                <strong className="text-foreground">3.4.</strong> Noto'g'ri
+                ma'lumotlar sababli buyurtmaning bekor qilinishi uchun sayt
+                ma'muriyati javobgar bo'lmaydi.
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4">
+              4. MAXFIYLIK VA MA'LUMOTLARNI HIMOYA QILISH
+            </h2>
+            <div className="space-y-3 text-muted-foreground">
+              <p>
+                <strong className="text-foreground">4.1.</strong>{" "}
+                Foydalanuvchilarning shaxsiy ma'lumotlari Maxfiylik siyosati
+                asosida yig'iladi va himoya qilinadi.
+              </p>
+              <p>
+                <strong className="text-foreground">4.2.</strong> Sayt SSL
+                sertifikati va HTTPS protokoli orqali himoyalangan,
+                foydalanuvchi ma'lumotlari shifrlangan holda uzatiladi.
+              </p>
+              <p>
+                <strong className="text-foreground">4.3.</strong> Batafsil
+                ma'lumot uchun foydalanuvchi "Maxfiylik siyosati" bo'limi bilan
+                tanishib chiqishi kerak.
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4">
+              5. MUALLIFLIK HUQUQI VA KONTENTDAN FOYDALANISH
+            </h2>
+            <div className="space-y-3 text-muted-foreground">
+              <p>
+                <strong className="text-foreground">5.1.</strong> donerfood.uz
+                saytida joylashtirilgan barcha materiallar — logotip, matn,
+                dizayn, rasm, kod, brend elementi va boshqa kontent — mualliflik
+                huquqi bilan himoyalangan.
+              </p>
+              <p>
+                <strong className="text-foreground">5.2.</strong> Ushbu
+                materiallarni ruxsatsiz ko'chirish, nusxalash, tarqatish yoki
+                boshqa saytlarda joylashtirish qat'iyan taqiqlanadi.
+              </p>
+              <p>
+                <strong className="text-foreground">5.3.</strong> Sayt
+                materiallaridan foydalanish faqat donerfood.uz ma'muriyatining
+                yozma ruxsati bilan amalga oshirilishi mumkin.
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4">
+              6. JAVOBGARLIK CHEKLASH
+            </h2>
+            <div className="space-y-3 text-muted-foreground">
+              <p>
+                <strong className="text-foreground">6.1.</strong> donerfood.uz
+                foydalanuvchi tomonidan kiritilgan noto'g'ri ma'lumotlar yoki
+                noto'g'ri yetkazilgan buyurtmalar uchun javobgar emas.
+              </p>
+              <p>
+                <strong className="text-foreground">6.2.</strong> Sayt texnik
+                nosozliklar, internet uzilishlari yoki uchinchi tomon
+                xizmatlaridagi muammolar sababli yuzaga kelgan kechikishlar
+                uchun javobgar bo'lmasligi mumkin.
+              </p>
+              <p>
+                <strong className="text-foreground">6.3.</strong> Foydalanuvchi
+                o'z hisobiga (agar mavjud bo'lsa) va saytdagi harakatlariga
+                shaxsan javobgar.
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4">
+              7. O'ZGARTIRISHLAR KIRITISH
+            </h2>
+            <div className="space-y-3 text-muted-foreground">
+              <p>
+                <strong className="text-foreground">7.1.</strong> donerfood.uz
+                ushbu Foydalanish shartlarini istalgan vaqtda yangilash yoki
+                o'zgartirish huquqiga ega.
+              </p>
+              <p>
+                <strong className="text-foreground">7.2.</strong> Yangilangan
+                versiyalar sayt sahifasida e'lon qilinadi va e'lon qilingan
+                paytdan boshlab kuchga kiradi.
+              </p>
+              <p>
+                <strong className="text-foreground">7.3.</strong>{" "}
+                Foydalanuvchilar Shartlardagi o'zgarishlarni muntazam ravishda
+                kuzatib borishlari tavsiya etiladi.
+              </p>
+            </div>
+          </div>
+        </div>
       </section>
 
-      <section>
-        <h2 className="text-2xl font-semibold mb-2">2. Information We Collect</h2>
-        <p>
-          We may collect the following types of information:
-        </p>
-        <ul className="list-disc ml-6">
-          <li>Personal information you provide voluntarily (name, email, phone number, etc.)</li>
-          <li>Order and transaction history</li>
-          <li>Device and browser information (user agent, IP address)</li>
-          <li>Location information (with your consent)</li>
-          <li>Cookies and usage analytics data</li>
-        </ul>
-      </section>
+      {/* MAXFIYLIK SIYOSATI */}
+      <section className="space-y-6 pt-12 border-t">
+        <h1 className="text-3xl sm:text-4xl font-bold text-center mb-8">
+          MAXFIYLIK SIYOSATI
+        </h1>
 
-      <section>
-        <h2 className="text-2xl font-semibold mb-2">3. How We Use Your Information</h2>
-        <p>
-          The information we collect may be used for the following purposes:
+        <p className="text-muted-foreground">
+          Amal qiladi:{" "}
+          <span className="text-primary font-semibold">donerfood.uz</span>{" "}
+          saytida
         </p>
-        <ul className="list-disc ml-6">
-          <li>To process orders and provide services</li>
-          <li>To improve and personalize your experience</li>
-          <li>To communicate important updates and promotions</li>
-          <li>To detect and prevent fraud or illegal activity</li>
-          <li>To analyze location data for service improvements and delivery optimization</li>
-        </ul>
-      </section>
 
-      <section>
-        <h2 className="text-2xl font-semibold mb-2">4. Location Information</h2>
-        <p>
-          We may request access to your location to provide better services such as:
-        </p>
-        <ul className="list-disc ml-6">
-          <li>Faster delivery of your orders</li>
-          <li>Showing relevant promotions based on your area</li>
-          <li>Analyzing geographical usage patterns</li>
-        </ul>
-        <p>
-          Location is collected only if you grant permission through your device or browser. You can
-          disable location access at any time in your device or browser settings. We do not share
-          your precise location with third parties for advertising purposes without your consent.
-        </p>
-      </section>
+        <div className="space-y-6">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4">
+              1. UMUMIY QOIDALAR
+            </h2>
+            <div className="space-y-3 text-muted-foreground">
+              <p>
+                <strong className="text-foreground">1.1.</strong> Ushbu
+                Maxfiylik siyosati donerfood.uz foydalanuvchilari tomonidan
+                taqdim etilgan shaxsiy ma'lumotlarni yig'ish, saqlash va
+                ishlatish tartibini belgilaydi.
+              </p>
+              <p>
+                <strong className="text-foreground">1.2.</strong> Sayt orqali
+                buyurtma berish yoki ro'yxatdan o'tish jarayonida foydalanuvchi
+                ushbu siyosat shartlariga rozilik bildiradi.
+              </p>
+              <p>
+                <strong className="text-foreground">1.3.</strong> donerfood.uz
+                ma'muriyati foydalanuvchi ma'lumotlarini himoya qilishni o'z
+                zimmasiga oladi va ularni uchinchi shaxslarga qonunda
+                belgilangan hollardan tashqari taqdim etmaydi.
+              </p>
+              <p>
+                <strong className="text-foreground">1.4.</strong> Sayt SSL
+                sertifikati va HTTPS protokoli orqali ishlaydi, bu foydalanuvchi
+                ma'lumotlarini xavfsiz va shifrlangan tarzda uzatishni
+                ta'minlaydi.
+              </p>
+            </div>
+          </div>
 
-      <section>
-        <h2 className="text-2xl font-semibold mb-2">5. Cookies and Tracking</h2>
-        <p>
-          We use cookies and similar tracking technologies to:
-        </p>
-        <ul className="list-disc ml-6">
-          <li>Remember your preferences</li>
-          <li>Analyze website usage</li>
-          <li>Enhance your experience on our platform</li>
-        </ul>
-      </section>
+          <div>
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4">
+              2. MA'LUMOTLARNI YIG'ISH
+            </h2>
+            <div className="space-y-3 text-muted-foreground">
+              <p>
+                <strong className="text-foreground">2.1.</strong> donerfood.uz
+                faqat foydalanuvchi o'zi rozilik bergan taqdirda shaxsiy
+                ma'lumotlarni qabul qiladi.
+              </p>
+              <p>
+                <strong className="text-foreground">2.2.</strong> Quyidagi
+                ma'lumotlar yig'ilishi mumkin:
+              </p>
+              <ul className="list-disc list-inside ml-4 space-y-1">
+                <li>Ism va familiya;</li>
+                <li>Telefon raqami;</li>
+                <li>Yetkazib berish manzili.</li>
+              </ul>
+              <p>
+                <strong className="text-foreground">2.3.</strong> Ushbu
+                ma'lumotlar faqat buyurtmani qayta ishlash, yetkazib berish va
+                foydalanuvchi bilan bog'lanish maqsadida ishlatiladi.
+              </p>
+              <p>
+                <strong className="text-foreground">2.4.</strong> Foydalanuvchi
+                tomonidan taqdim etilgan ma'lumotlar uchinchi tomonlarga
+                avtomatik tarzda uzatilmaydi.
+              </p>
+            </div>
+          </div>
 
-      <section>
-        <h2 className="text-2xl font-semibold mb-2">6. Data Sharing</h2>
-        <p>
-          We do not sell your personal information. We may share your information only in the following
-          cases:
-        </p>
-        <ul className="list-disc ml-6">
-          <li>With trusted service providers who help us operate our business</li>
-          <li>To comply with legal obligations or respond to lawful requests</li>
-          <li>In the event of a merger or sale of the company</li>
-        </ul>
-      </section>
+          <div>
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4">
+              3. MA'LUMOTLARNI FOYDALANISH TARTIBI
+            </h2>
+            <div className="space-y-3 text-muted-foreground">
+              <p>
+                <strong className="text-foreground">3.1.</strong>{" "}
+                Foydalanuvchining shaxsiy ma'lumotlari quyidagi hollarda
+                ishlatiladi:
+              </p>
+              <ul className="list-disc list-inside ml-4 space-y-1">
+                <li>Buyurtmani tasdiqlash va yetkazib berish uchun;</li>
+                <li>
+                  Foydalanuvchi bilan aloqa o'rnatish (masalan, telefon orqali
+                  bog'lanish);
+                </li>
+                <li>Xizmat sifatini yaxshilash va tahlil qilish uchun.</li>
+              </ul>
+              <p>
+                <strong className="text-foreground">3.2.</strong>{" "}
+                Foydalanuvchining ma'lumotlari reklama yoki uchinchi shaxslar
+                bilan bo'lishish uchun foydalanilmaydi.
+              </p>
+              <p>
+                <strong className="text-foreground">3.3.</strong> Ma'lumotlar
+                faqat qonuniy va halol maqsadlarda ishlatiladi.
+              </p>
+            </div>
+          </div>
 
-      <section>
-        <h2 className="text-2xl font-semibold mb-2">7. Security</h2>
-        <p>
-          We implement appropriate technical and organizational measures to protect your personal
-          information. However, no method of transmission over the Internet or electronic storage is
-          100% secure.
-        </p>
-      </section>
+          <div>
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4">
+              4. MA'LUMOTLARNI SAQLASH VA HIMOYA QILISH
+            </h2>
+            <div className="space-y-3 text-muted-foreground">
+              <p>
+                <strong className="text-foreground">4.1.</strong> donerfood.uz
+                foydalanuvchilarning ma'lumotlarini xavfsiz serverlarda
+                saqlaydi.
+              </p>
+              <p>
+                <strong className="text-foreground">4.2.</strong> SSL
+                sertifikati orqali foydalanuvchidan serverga uzatiladigan barcha
+                ma'lumotlar shifrlangan holda yuboriladi.
+              </p>
+              <p>
+                <strong className="text-foreground">4.3.</strong> Ma'lumotlar
+                faqat xizmat ko'rsatish davrida saqlanadi va zarur bo'lmaganda
+                o'chiriladi.
+              </p>
+              <p>
+                <strong className="text-foreground">4.4.</strong> Foydalanuvchi
+                o'z ma'lumotlarini o'zgartirish yoki o'chirishni so'rash
+                huquqiga ega.
+              </p>
+              <p>
+                <strong className="text-foreground">4.5.</strong> Maxfiylik
+                siyosatini buzishga urinish aniqlansa, sayt ma'muriyati tegishli
+                huquqiy choralar ko'rish huquqiga ega.
+              </p>
+            </div>
+          </div>
 
-      <section>
-        <h2 className="text-2xl font-semibold mb-2">8. Your Rights</h2>
-        <p>
-          Depending on your location, you may have the right to:
-        </p>
-        <ul className="list-disc ml-6">
-          <li>Access and request a copy of your data</li>
-          <li>Correct or update inaccurate information</li>
-          <li>Request deletion of your personal information</li>
-          <li>Opt out of marketing communications</li>
-        </ul>
-      </section>
+          <div>
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4">
+              5. FOYDALANUVCHI ROZILIGI
+            </h2>
+            <div className="space-y-3 text-muted-foreground">
+              <p>
+                <strong className="text-foreground">5.1.</strong> donerfood.uz
+                dan foydalanish orqali foydalanuvchi ushbu Maxfiylik siyosatida
+                ko'rsatilgan barcha shartlarga rozilik bildiradi.
+              </p>
+              <p>
+                <strong className="text-foreground">5.2.</strong> Foydalanuvchi
+                roziligisiz hech qanday shaxsiy ma'lumot yig'ilmaydi yoki
+                ishlatilmaydi.
+              </p>
+              <p>
+                <strong className="text-foreground">5.3.</strong> Agar
+                foydalanuvchi ma'lumotlarini taqdim etishni xohlamasa, buyurtma
+                joylashtirish xizmati cheklanishi mumkin.
+              </p>
+            </div>
+          </div>
 
-      <section>
-        <h2 className="text-2xl font-semibold mb-2">9. Children’s Privacy</h2>
-        <p>
-          Our services are not intended for children under 13 years old. We do not knowingly collect
-          personal information from children. If you believe we have collected such information,
-          please contact us for removal.
-        </p>
-      </section>
+          <div>
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4">
+              6. MUALLIFLIK HUQUQI VA KONTENTDAN FOYDALANISH
+            </h2>
+            <div className="space-y-3 text-muted-foreground">
+              <p>
+                <strong className="text-foreground">6.1.</strong> donerfood.uz
+                saytida joylashtirilgan barcha materiallar (matnlar, logotip,
+                dizayn, rasmlar, kod va boshqa tarkibiy qismlar) mualliflik
+                huquqi bilan himoyalangan.
+              </p>
+              <p>
+                <strong className="text-foreground">6.2.</strong> Ushbu
+                materiallarni ruxsatsiz ko'chirish, nusxalash, tarqatish yoki
+                boshqa sayt va platformalarda foydalanish qat'iyan taqiqlanadi.
+              </p>
+              <p>
+                <strong className="text-foreground">6.3.</strong> Sayt
+                ma'muriyati tomonidan yozma ruxsat berilgan hollardagina
+                kontentdan foydalanishga yo'l qo'yiladi.
+              </p>
+              <p>
+                <strong className="text-foreground">6.4.</strong> Ushbu
+                qoidabuzarliklar qonun doirasida javobgarlikka olib kelishi
+                mumkin.
+              </p>
+            </div>
+          </div>
 
-      <section>
-        <h2 className="text-2xl font-semibold mb-2">10. Changes to This Policy</h2>
-        <p>
-          We may update this Privacy Policy from time to time. Any changes will be posted on this page,
-          and the date of the last update will be indicated. We encourage you to review this page
-          periodically to stay informed about how we protect your information.
-        </p>
-      </section>
+          <div>
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4">
+              7. O'ZGARTIRISHLAR KIRITISH
+            </h2>
+            <div className="space-y-3 text-muted-foreground">
+              <p>
+                <strong className="text-foreground">7.1.</strong> donerfood.uz
+                ma'muriyati ushbu Maxfiylik siyosatini istalgan vaqtda yangilash
+                huquqiga ega.
+              </p>
+              <p>
+                <strong className="text-foreground">7.2.</strong>{" "}
+                O'zgartirishlar e'lon qilingan paytdan boshlab kuchga kiradi.
+              </p>
+              <p>
+                <strong className="text-foreground">7.3.</strong>{" "}
+                Foydalanuvchilar siyosatdagi o'zgarishlarni muntazam ravishda
+                kuzatib borishlari tavsiya etiladi.
+              </p>
+            </div>
+          </div>
 
-      <section>
-        <h2 className="text-2xl font-semibold mb-2">11. Contact Us</h2>
-        <p>
-          If you have questions or concerns about this Privacy Policy or our data practices, please
-          contact us at:
-        </p>
-        <ul className="list-disc ml-6">
-          <li>Email: <a href="mailto:kursant410@gmail.com" className="text-blue-600 underline">kursant410@gmail.com</a></li>
-          <li>Phone: <a href="tel:+998900033723" className="text-blue-600 underline">+998900033723</a></li>
-          <li>Address: Jaloliddin Manguberdi Military Academic Lyceum, Urganch, Uzbekistan</li>
-        </ul>
+          <div>
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4">
+              8. ALOQA UCHUN MA'LUMOTLAR
+            </h2>
+            <div className="space-y-3 text-muted-foreground">
+              <p className="text-lg font-semibold text-foreground">
+                +998 91 985 95 95
+              </p>
+              <p>
+                Agar sizda ushbu Maxfiylik siyosatiga oid savollar bo'lsa,
+                quyidagi manzil orqali murojaat qilishingiz mumkin:
+              </p>
+            </div>
+          </div>
+        </div>
       </section>
     </div>
   );

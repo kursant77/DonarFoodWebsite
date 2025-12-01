@@ -13,7 +13,7 @@ export default function Footer() {
   const { elementRef, isVisible } = useScrollAnimation(0.1);
 
   return (
-    <footer 
+    <footer
       ref={elementRef}
       className={`bg-muted/50 border-t mt-16 transition-all duration-1000 ${
         isVisible ? "animate-in fade-in slide-in-from-bottom-8" : "opacity-0"
@@ -24,21 +24,47 @@ export default function Footer() {
           {/* About */}
           <div className="space-y-4">
             <h3 className="text-2xl font-bold mb-4 animate-in fade-in slide-in-from-left duration-700">
-              🍔 Doner Food
+              🍔 Döner Food
             </h3>
             <p className="text-muted-foreground mb-4 text-sm sm:text-base animate-in fade-in slide-in-from-left duration-700 delay-100">
-              Tezkor xizmat, mazali taom va do'stona muhit. <br className="hidden sm:block" />
+              Tezkor xizmat, mazali taom va do'stona muhit.{" "}
+              <br className="hidden sm:block" />
               Biz har doim sifatli va yangi taomlar tayyorlaymiz.
             </p>
 
             {/* Social Links */}
             <div className="flex gap-4 sm:gap-5 flex-wrap">
               {[
-                { icon: Send, href: "https://t.me/donerfood_uz", color: "hover:text-blue-500", label: "Telegram" },
-                { icon: MessageCircle, href: "https://t.me/donerfood_chat", color: "hover:text-sky-500", label: "Chat" },
-                { icon: Instagram, href: "https://instagram.com/dooner_food", color: "hover:text-pink-500", label: "Instagram" },
-                { icon: Globe, href: "https://donerfood.uz", color: "hover:text-green-500", label: "Website" },
-                { icon: MapPin, href: "https://maps.app.goo.gl/nyQNtouLmR8g5Zgk7", color: "hover:text-red-500", label: "Location" },
+                {
+                  icon: Send,
+                  href: "https://t.me/donerfood_uz",
+                  color: "hover:text-blue-500",
+                  label: "Telegram",
+                },
+                {
+                  icon: MessageCircle,
+                  href: "https://t.me/donerfood_chat",
+                  color: "hover:text-sky-500",
+                  label: "Chat",
+                },
+                {
+                  icon: Instagram,
+                  href: "https://instagram.com/dooner_food",
+                  color: "hover:text-pink-500",
+                  label: "Instagram",
+                },
+                {
+                  icon: Globe,
+                  href: "https://donerfood.uz",
+                  color: "hover:text-green-500",
+                  label: "Website",
+                },
+                {
+                  icon: MapPin,
+                  href: "https://maps.app.goo.gl/nyQNtouLmR8g5Zgk7",
+                  color: "hover:text-red-500",
+                  label: "Location",
+                },
               ].map((social, index) => {
                 const Icon = social.icon;
                 return (
@@ -71,7 +97,7 @@ export default function Footer() {
               ].map((item, index) => {
                 const Icon = item.icon;
                 return (
-                  <div 
+                  <div
                     key={index}
                     className="flex items-start gap-2 sm:gap-3 group animate-in fade-in slide-in-from-bottom duration-700"
                     style={{ animationDelay: `${300 + index * 100}ms` }}
@@ -131,17 +157,17 @@ export default function Footer() {
               className="hover:text-primary transition-colors duration-300"
             >
               Asadbek Jumanazarov
-            </a>
-            {" "}&{" "}
+            </a>{" "}
+            &{" "}
             <a
               href="https://atakhanov.uz"
               className="hover:text-primary transition-colors duration-300"
             >
-              Mirkamol Atahanov
-            </a>
-            {" "}&{" "}
+              Mirkamol Atakhanov
+            </a>{" "}
+            &{" "}
             <a
-              href="https://t.me/@asadbekjs"
+              href="https://t.me/asadbekjs"
               className="hover:text-primary transition-colors duration-300"
             >
               Asadbek Rakhimov

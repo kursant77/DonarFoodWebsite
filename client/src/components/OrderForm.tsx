@@ -26,7 +26,7 @@ interface LocationData {
 }
 
 const TELEGRAM_FUNCTION_URL =
-  import.meta.env.VITE_TELEGRAM_FUNCTION_URL || "/api/sentTelegram";
+  import.meta.env.VITE_TELEGRAM_FUNCTION_URL || "/.netlify/functions/sentTelegram";
 
 const RESTAURANT_LOCATION = {
   latitude: 41.65475,
@@ -377,6 +377,7 @@ export default function OrderForm({
               onCheckedChange={handleLocationShare}
               disabled={gettingLocation}
               required
+              className="h-3 w-3 md:h-4 md:w-4"
             />
             <Label
               htmlFor="shareLocation"
