@@ -26,7 +26,7 @@ interface LocationData {
 }
 
 const TELEGRAM_FUNCTION_URL =
-  import.meta.env.VITE_TELEGRAM_FUNCTION_URL || "/.netlify/functions/sentTelegram";
+  import.meta.env.VITE_TELEGRAM_FUNCTION_URL || "/api/sentTelegram";
 
 const RESTAURANT_LOCATION = {
   latitude: 41.65475,
