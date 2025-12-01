@@ -1,4 +1,0 @@
-{
-  "version": 2,
-  "comment": "This file is not needed when deploying from root. Root vercel.json handles everything."
-}
