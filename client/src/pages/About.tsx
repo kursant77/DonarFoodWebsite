@@ -132,7 +132,7 @@ export default function About() {
             style={{ transitionDelay: "400ms" }}
           >
             <img
-              src="/exterior-night.JPG"
+              src="/donerfood-exterior (2).webp"
               alt="Doner Food dining area"
               className="w-full h-full min-h-[300px] object-cover rounded-lg hover:scale-105 transition-transform duration-300 cursor-pointer"
               loading="lazy"
@@ -146,7 +146,7 @@ export default function About() {
               style={{ transitionDelay: "500ms" }}
             >
               <img
-                src="/exterior-day.JPG"
+                src="/donerfood-interior.webp"
                 alt="Doner Food dining area"
                 className="w-full h-48 sm:h-56 object-cover rounded-lg hover:scale-105 transition-transform duration-300 cursor-pointer"
                 loading="lazy"
@@ -159,7 +159,7 @@ export default function About() {
               style={{ transitionDelay: "600ms" }}
             >
               <img
-                src="/interior.JPG"
+                src="/donerfood-interio-day.webp"
                 alt="Doner Food dining area"
                 className="w-full h-48 sm:h-56 object-cover rounded-lg hover:scale-105 transition-transform duration-300 cursor-pointer"
                 loading="lazy"
